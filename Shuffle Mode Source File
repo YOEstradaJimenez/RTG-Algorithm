@@ -1,0 +1,1322 @@
+#include <iostream>
+#include <vector>
+#include <algorithm>
+#include <string>
+#include "ShuffleMode.h"
+
+
+std::vector<int>ShortestPath(std::vector<std::vector<std::vector<int>>> PromptPriorityTensor)
+{
+    // Coordinates
+    std::vector<int> Coordinates;
+
+    // Dimensions
+    int TemporalRow;
+    int TemporalColumn;
+    int TemporalHeight;
+
+    // Default Origin
+    int TemporalPositionX = 0;
+    int TemporalPositionY = -1;
+    int TemporalPositionZ = 0;
+
+    // One Step a head
+    int TemporalPositionStepaHeadX;
+    int TemporalPositionStepaHeadY;
+    int TemporalPositionStepaHeadZ;
+
+    // Temporal Position
+    int TemporalPositionComparerX = 0;
+    int TemporalPositionComparerY = -1;
+    int TemporalPositionComparerZ = 0;
+
+    // Temporal a Head Position
+    int TemporalPositionComparerCopyZ = -1;
+
+    // Default Destination
+    int TemporalDestinationX = -1;
+    int TemporalDestinationY = 0;
+    int TemporalDestinationZ = 0;
+
+    // One Step a head
+    int TemporalDestinationStepaHeadX;
+    int TemporalDestinationStepaHeadY;
+    int TemporalDestinationStepaHeadZ;
+
+    // Temporal Destination
+    int TemporalDestinationComparerX = -1;
+    int TemporalDestinationComparerY = 0;
+    int TemporalDestinationComparerZ = 0;
+
+    // Skiping Serial Number
+    int TemporalCounterStepaHead = 0;
+    int TemporalCounterSumaHead = 0;
+    int TemporalCounterBlockOver = 0;
+
+    // Order Condition
+    int TemporalDisorderCheck = 1;
+    int Order = 0;
+
+    // Done Condition
+    int Done = 0;
+
+    // Start from the Bottom
+    int LowestLevel = 1;
+
+    // Shortest Path
+    int CounterShortestPath = 0;
+    int SumShortestPath = 0;
+
+    // Numbers of Steps
+    int TemporalStepsPosition = 0;
+    int TemporalStepsDestination = 0;
+    std::vector<std::vector<int>> TemporalFreeSpaceMatrix;
+    std::vector<std::vector<int>> TemporalFreeVariationMatrix;
+
+    // Preference of Movement
+    std::vector<std::vector<int>> TemporalPreferencePositionMatrix;
+    std::vector<std::vector<int>> TemporalPreferenceDestinationMatrix;
+    int TemporalCounterFirstPreferencePosition = 2;
+    int TemporalCounterSecondPreferencePosition = 0;
+
+    // Testing
+    std::vector<std::vector<std::vector<int>>> PriorityTestingTensor = PromptPriorityTensor;
+
+    // Temporal Priority Matrix
+    std::vector<std::vector<std::vector<int>>> TemporalPriorityReferenceTensor;
+    std::vector<std::vector<std::vector<int>>> TemporalPriorityComparerTensor;
+
+    // Determine Dimension
+    int CounterRowTesting = 0;
+    int CounterColumnTesting = 0;
+    int CounterHeightTesting = 0;
+
+    // Disorder Counter
+    int TemporalCounterDisorder;
+
+    // Sequence Destination
+    std::vector<int> TemporalSequenceDestinationX;
+    std::vector<int> TemporalSequenceDestinationY;
+    std::vector<int> TemporalSequenceDestinationZ;
+
+    // Sequence Reverse Destination
+    std::vector<int> TemporalSequenceDestinationReverseX;
+    std::vector<int> TemporalSequenceDestinationReverseY;
+    std::vector<int> TemporalSequenceDestinationReverseZ;
+
+    // Sequence Destination - Recorder
+    std::vector<int> TemporalSequenceDestinationRecorderX;
+    std::vector<int> TemporalSequenceDestinationRecorderY;
+    std::vector<int> TemporalSequenceDestinationRecorderZ;
+
+    // Sequence Position
+    std::vector<int> TemporalSequencePositionX;
+    std::vector<int> TemporalSequencePositionY;
+    std::vector<int> TemporalSequencePositionZ;
+
+    // Sequence Reverse Position
+    std::vector<int> TemporalSequencePositionReverseX;
+    std::vector<int> TemporalSequencePositionReverseY;
+    std::vector<int> TemporalSequencePositionReverseZ;
+
+    // Sequence Position - Recorder
+    std::vector<int> TemporalSequencePositionRecorderX;
+    std::vector<int> TemporalSequencePositionRecorderY;
+    std::vector<int> TemporalSequencePositionRecorderZ;
+
+    // Visual Aspects
+    std::vector<std::vector<std::vector<int>>> TemporalLevelViewTensor;
+
+    // For Writing
+    int TemporalCounterDigit = 1;
+    int TemporalDigit = 0;
+
+    // Memory Aspects
+    std::vector<std::vector<std::vector<int>>> TemporalMemoryTensor;
+
+    // Priority Aspects
+    std::vector<std::vector<std::vector<int>>> PriorityStaticTensor;
+    std::vector<std::vector<std::vector<int>>> TemporalPriorityDinamicTensor;
+    std::vector<std::vector<std::vector<int>>> PriorityShuffleTensor;
+
+    TemporalPriorityReferenceTensor = PriorityTestingTensor;
+
+    // Determine Dimension Row Column Height
+    for (int k = 0; k < PriorityTestingTensor.size(); k++)
+    {
+
+        for (int j = 0; j < PriorityTestingTensor[k].size(); j++)
+        {
+
+            for (int i = 0; i < PriorityTestingTensor[k][j].size(); i++)
+            {
+                if (k == 0 && j == 0)
+                {
+                    CounterColumnTesting++;
+                }
+            }
+
+            if (k == 0)
+            {
+                CounterRowTesting++;
+            }
+        }
+        CounterHeightTesting++;
+    }
+
+    // Insert Initiall Dimensions
+    TemporalColumn = CounterColumnTesting;
+    TemporalRow = CounterRowTesting;
+    TemporalHeight = CounterHeightTesting;
+
+
+    // Reconfigurating  Priority Matrix
+    // Counting non Zeros
+    int CounterNonzeros = 0;
+    for (int k = 0; k < TemporalHeight; k++)
+    {
+        for (int j = 0; j < TemporalRow; j++)
+        {
+
+            for (int i = 0; i < TemporalColumn; i++)
+            {
+                if (TemporalPriorityReferenceTensor[k][j][i] > 0)
+                {
+                    CounterNonzeros++;
+                }
+            }
+        }
+    }
+
+    // Editing Temporal Matrix
+    int TemporalReference = (TemporalHeight - 1) * TemporalRow * TemporalColumn;
+    for (int t = 0; t < CounterNonzeros; t++)
+    {
+        int Reference = 0;
+        int CopyZ = 0;
+        int CopyY = 0;
+        int CopyX = 0;
+
+        for (int k = 0; k < TemporalHeight; k++)
+        {
+            for (int j = 0; j < TemporalRow; j++)
+            {
+                for (int i = 0; i < TemporalColumn; i++)
+                {
+                    if (TemporalPriorityReferenceTensor[k][j][i] > Reference && TemporalPriorityReferenceTensor[k][j][i] <= TemporalReference)
+                    {
+                        Reference = TemporalPriorityReferenceTensor[k][j][i];
+                        CopyZ = k;
+                        CopyY = j;
+                        CopyX = i;
+                    }
+                }
+            }
+        }
+        TemporalPriorityReferenceTensor[CopyZ][CopyY][CopyX] = TemporalReference;
+        TemporalReference--;
+    }
+
+    if (TemporalHeight - 2 > 0)
+    {
+        LowestLevel = TemporalHeight - 2;
+    }
+    else
+    {
+        LowestLevel = 1;
+    }
+
+
+
+    int Clear = 1;
+
+    CounterShortestPath = TemporalColumn * TemporalRow * TemporalHeight;
+
+    // Create Space
+    for (int k = 0; k < TemporalHeight; k++)
+    {
+        std::vector<std::vector<int>> H;
+        for (int j = 0; j < TemporalRow; j++)
+        {
+            std::vector<int> F;
+            std::vector<int> O;
+            for (int i = 0; i < TemporalColumn; i++)
+            {
+                F.push_back(0);
+                O.push_back(0);
+            }
+            H.push_back(F);
+            TemporalFreeSpaceMatrix.push_back(O);
+            TemporalPreferencePositionMatrix.push_back(O);
+            TemporalPreferenceDestinationMatrix.push_back(O);
+        }
+        TemporalLevelViewTensor.push_back(H);
+        TemporalPriorityComparerTensor.push_back(H);
+        PriorityStaticTensor.push_back(H);
+        TemporalPriorityDinamicTensor.push_back(H);
+        PriorityShuffleTensor.push_back(H);
+        TemporalMemoryTensor.push_back(H);
+    }
+
+    std::vector<int> NonZerosComparer;
+    for (int k = 0; k < TemporalHeight; k++)
+    {
+        for (int j = 0; j < TemporalRow; j++)
+        {
+
+            for (int i = 0; i < TemporalColumn; i++)
+            {
+                if (TemporalPriorityReferenceTensor[k][j][i] > 0)
+                {
+                    NonZerosComparer.push_back(TemporalPriorityReferenceTensor[k][j][i]);
+                }
+            }
+        }
+    }
+
+    // Creating Comparer Matrix
+    TemporalPriorityComparerTensor = TemporalPriorityReferenceTensor;
+
+    // Create Memory Matrix from Priority Matrix
+    for (int k = 0; k < TemporalHeight; k++)
+    {
+        for (int j = 0; j < TemporalRow; j++)
+        {
+            for (int i = 0; i < TemporalColumn; i++)
+            {
+
+                if (PriorityTestingTensor[k][j][i] > 0)
+                {
+
+                    TemporalMemoryTensor[k][j][i] = 1;
+
+                }
+            }
+        }
+    }
+
+    // Creation of Matrix Criteria of Static Priority
+    int CounterStaticPriorityTemporal = 1;
+    for (int k = 0; k < TemporalHeight; k++)
+    {
+        for (int j = 0; j < TemporalRow; j++)
+        {
+            for (int i = 0; i < TemporalColumn; i++)
+            {
+
+                if (k == TemporalHeight - 1)
+                {
+
+                    PriorityStaticTensor[k][j][i] = TemporalRow * TemporalColumn * TemporalHeight;
+
+                }
+                else
+                {
+                    PriorityStaticTensor[k][j][i] = CounterStaticPriorityTemporal;
+                    CounterStaticPriorityTemporal++;
+                }
+            }
+        }
+    }
+
+    // Creation of Matrix Criteria of Shuffle Priority
+    int CounterShufflePriorityTemporal = 1;
+    for (int k = TemporalHeight - 1; k >= 0; k--)
+    {
+        for (int j = 0; j < TemporalRow; j++)
+        {
+            for (int i = 0; i < TemporalColumn; i++)
+            {
+                if (k == TemporalHeight - 1)
+                {
+                    PriorityShuffleTensor[k][j][i] = TemporalRow * TemporalColumn * TemporalHeight;
+                }
+                else
+                {
+                    PriorityShuffleTensor[k][j][i] = CounterShufflePriorityTemporal;
+                    CounterShufflePriorityTemporal++;
+                }
+            }
+        }
+    }
+
+    // OverWrite Prioriority Matrix
+    TemporalPriorityDinamicTensor = PriorityTestingTensor;
+    TemporalLevelViewTensor = PriorityTestingTensor;
+
+
+    // Setting the Lowest Level
+    if (LowestLevel > 1)
+    {
+        int LevelReference = TemporalHeight;
+        int LevelDisorderCheck = 0;
+
+        for (int k = 0; k < TemporalHeight; k++)
+        {
+            for (int j = 0; j < TemporalRow; j++)
+            {
+                for (int i = 0; i < TemporalColumn; i++)
+                {
+                    if (TemporalPriorityComparerTensor[k][j][i] != PriorityShuffleTensor[k][j][i] && TemporalPriorityComparerTensor[k][j][i] > 0)
+                    {
+                        if (LevelReference > k)
+                        {
+                            LevelReference = k;
+                            LevelDisorderCheck = 1;
+                        }
+                       
+                    }
+                }
+            }
+        }
+
+        if (LevelDisorderCheck == 1)
+        {
+            LowestLevel = LowestLevel - LevelReference;
+        }
+    }
+    
+
+ 
+        //Begining of the While Loop
+        while (TemporalDisorderCheck)
+        {
+
+            TemporalCounterFirstPreferencePosition = 2;
+            TemporalCounterSecondPreferencePosition = 0;
+
+            TemporalStepsPosition = 0;
+            TemporalStepsDestination = 0;
+
+            std::vector<int> EmptyVector;
+
+            TemporalSequenceDestinationX.clear();
+            TemporalSequenceDestinationX.swap(EmptyVector);
+
+            TemporalSequenceDestinationY.clear();
+            TemporalSequenceDestinationY.swap(EmptyVector);
+
+            TemporalSequenceDestinationZ.clear();
+            TemporalSequenceDestinationZ.swap(EmptyVector);
+
+            TemporalSequencePositionX.clear();
+            TemporalSequencePositionX.swap(EmptyVector);
+
+            TemporalSequencePositionY.clear();
+            TemporalSequencePositionY.swap(EmptyVector);
+
+            TemporalSequencePositionZ.clear();
+            TemporalSequencePositionZ.swap(EmptyVector);
+
+            // One Step a Head - Copying Step a Head
+            if (TemporalCounterStepaHead == 1)
+            {
+                TemporalPositionX = TemporalPositionStepaHeadX;
+                TemporalPositionY = TemporalPositionStepaHeadY;
+                TemporalPositionZ = TemporalPositionStepaHeadZ;
+
+                TemporalDestinationX = TemporalDestinationStepaHeadX;
+                TemporalDestinationY = TemporalDestinationStepaHeadY;
+                TemporalDestinationZ = TemporalDestinationStepaHeadZ;
+
+                TemporalCounterStepaHead = 2;
+
+                TemporalCounterSumaHead = 1;
+            }
+
+
+            // Testing to Find Shortest Path
+            if (TemporalCounterStepaHead == 0)
+            {
+                TemporalCounterDisorder = 0;
+
+                for (int k = 0; k < TemporalHeight; k++)
+                {
+                    for (int j = 0; j < TemporalRow; j++)
+                    {
+                        for (int i = 0; i < TemporalColumn; i++)
+                        {
+                            if (std::find(NonZerosComparer.begin(), NonZerosComparer.end(), TemporalPriorityComparerTensor[k][j][i]) != NonZerosComparer.end() && TemporalPriorityComparerTensor[k][j][i] > TemporalRow * TemporalColumn * LowestLevel)
+                            {
+                                if (TemporalPriorityComparerTensor[k][j][i] != PriorityShuffleTensor[k][j][i] && TemporalPriorityComparerTensor[k][j][i] > 0)
+                                {
+                                    // Initial Condition to Start to Order
+                                    Order = 1;
+
+                                    TemporalPositionX = i;
+                                    TemporalPositionY = j;
+                                    TemporalPositionZ = k;
+
+                                    TemporalCounterDisorder++;
+
+                                    for (int z = 0; z < TemporalHeight; z++)
+                                    {
+                                        for (int y = 0; y < TemporalRow; y++)
+                                        {
+                                            for (int x = 0; x < TemporalColumn; x++)
+                                            {
+                                                if (PriorityShuffleTensor[z][y][x] == TemporalPriorityComparerTensor[k][j][i])
+                                                {
+                                                    TemporalDestinationX = x;
+                                                    TemporalDestinationY = y;
+                                                    TemporalDestinationZ = z;
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+
+                            }
+                        }
+                    }
+                }
+
+
+                if (TemporalPositionX < TemporalColumn && TemporalPositionX >= 0 && TemporalPositionY < TemporalRow && TemporalPositionY >= 0 && TemporalPositionZ < TemporalHeight && TemporalPositionZ >= 0)
+                {
+                    for (int q = 0; q < NonZerosComparer.size(); q++)
+                    {
+                        if (TemporalPriorityComparerTensor[TemporalPositionZ][TemporalPositionY][TemporalPositionX] == NonZerosComparer[q])
+                        {
+                            NonZerosComparer[q] = 0;
+                        }
+                    }
+                }
+            }
+
+
+
+            // Block Intercallated 
+            if (TemporalDestinationX == TemporalPositionX && TemporalDestinationY == TemporalPositionY && TemporalDestinationZ != TemporalPositionZ)
+            {
+                if (TemporalPositionZ < TemporalDestinationZ)
+                {
+                    int CopyPosiotionZ;
+                    CopyPosiotionZ = TemporalPositionZ;
+                    TemporalPositionZ = TemporalDestinationZ;
+                    TemporalDestinationZ = CopyPosiotionZ;
+                }
+
+                // Choosing a FreeSpace
+                //Algorithm of Determination of Destination
+                int Reference0 = TemporalRow * TemporalColumn * TemporalHeight;
+
+                int TempX = 0;
+                int TempY = -1;
+                int TempZ = 0;
+
+                for (int k = 0; k < TemporalHeight; k++)
+                {
+                    for (int j = 0; j < TemporalRow; j++)
+                    {
+                        for (int i = 0; i < TemporalColumn; i++)
+                        {
+                            if (PriorityStaticTensor[k][j][i] < Reference0 && TemporalMemoryTensor[k][j][i] == 0 && PriorityStaticTensor[k][j][i] != TemporalRow * TemporalColumn * TemporalHeight)
+                            {
+                                Reference0 = PriorityStaticTensor[k][j][i];
+                                TempX = i;
+                                TempY = j;
+                                TempZ = k;
+                            }
+                        }
+                    }
+                }
+
+                if (TemporalDestinationX == TemporalPositionX && TemporalDestinationY == TemporalPositionY && TemporalDestinationZ + 1 != TemporalPositionZ)
+                {
+                    // Remenber
+                    TemporalPositionComparerCopyZ = TemporalPositionZ;
+
+                    // Recording Reverse 
+                    TemporalSequencePositionRecorderX.push_back(TempX);
+                    TemporalSequencePositionRecorderY.push_back(TempY);
+                    TemporalSequencePositionRecorderZ.push_back(TempZ);
+
+                    TemporalSequenceDestinationRecorderX.push_back(TemporalPositionX);
+                    TemporalSequenceDestinationRecorderY.push_back(TemporalPositionY);
+                    TemporalSequenceDestinationRecorderZ.push_back(TemporalPositionZ);
+
+                    //One Step a head
+                    TemporalPositionStepaHeadX = TempX;
+                    TemporalPositionStepaHeadY = TempY;
+                    TemporalPositionStepaHeadZ = TempZ;
+
+                    TemporalDestinationStepaHeadX = TemporalDestinationX;
+                    TemporalDestinationStepaHeadY = TemporalDestinationY;
+                    TemporalDestinationStepaHeadZ = TemporalDestinationZ;
+
+                    TemporalCounterStepaHead = 1;
+
+
+
+                    TemporalDestinationX = TempX;
+                    TemporalDestinationY = TempY;
+                    TemporalDestinationZ = TempZ;
+                }
+                else
+                {
+                    if (TemporalDestinationX == TemporalPositionX && TemporalDestinationY == TemporalPositionY && TemporalDestinationZ + 1 == TemporalPositionZ)
+                    {
+                        if (TemporalPositionZ > TemporalDestinationZ)
+                        {
+                            int CopyPosiotionZ;
+                            CopyPosiotionZ = TemporalPositionZ;
+                            TemporalPositionZ = TemporalDestinationZ;
+                            TemporalDestinationZ = CopyPosiotionZ;
+                        }
+
+                        TemporalDestinationX = TempX;
+                        TemporalDestinationY = TempY;
+                        TemporalDestinationZ = TempZ;
+
+                        TemporalCounterBlockOver = 1;
+                    }
+                }
+            }
+
+
+            if (TemporalCounterDisorder < 1 && TemporalCounterStepaHead == 0)
+            {
+                TemporalPositionX = TemporalPositionComparerX;
+                TemporalPositionY = TemporalPositionComparerY;
+                TemporalPositionZ = TemporalPositionComparerZ;
+
+                TemporalDestinationX = TemporalDestinationComparerX;
+                TemporalDestinationY = TemporalDestinationComparerY;
+                TemporalDestinationZ = TemporalDestinationComparerZ;
+
+                CounterShortestPath = TemporalColumn * TemporalRow * TemporalHeight;
+
+                TemporalDisorderCheck = 0;
+
+            }
+
+
+
+
+            // Read Memory Matrix - Determine Steps and Free Space
+            if (TemporalCounterDisorder > 0)
+            {
+                for (int j = 0; j < TemporalRow; j++)
+                {
+                    for (int i = 0; i < TemporalColumn; i++)
+                    {
+                        int FreeSpaceCounter = 0;
+
+                        for (int k = 0; k < TemporalHeight; k++)
+                        {
+                            if (i == TemporalPositionX && TemporalPositionY == j && TemporalMemoryTensor[k][j][i] == 1)
+                            {
+                                if (k >= TemporalPositionZ)
+                                {
+                                    TemporalStepsPosition++;
+                                }
+                            }
+
+                            if (i == TemporalDestinationX && TemporalDestinationY == j && TemporalMemoryTensor[k][j][i] == 1)
+                            {
+                                if (k >= TemporalDestinationZ)
+                                {
+                                    TemporalStepsDestination++;
+                                }
+                            }
+
+                            if (TemporalMemoryTensor[k][j][i] == 0)
+                            {
+                                FreeSpaceCounter++;
+                            }
+
+                            if (k + 1 == TemporalHeight)
+                            {
+                                TemporalFreeSpaceMatrix[j][i] = FreeSpaceCounter;
+                            }
+                        }
+                    }
+                }
+            }
+
+
+            // Determine Preference Matrices
+            // Position Preference Matrix
+            if (TemporalCounterDisorder > 0)
+            {
+                for (int j = 0; j < TemporalRow; j++)
+                {
+                    for (int i = 0; i < TemporalColumn; i++)
+                    {
+                        if (TemporalStepsPosition > 1)
+                        {
+                            if (j == TemporalPositionY)
+                            {
+                                if (i >= TemporalPositionX)
+                                {
+                                    TemporalPreferencePositionMatrix[j][i] = i - TemporalPositionX;
+                                }
+                                else
+                                {
+                                    TemporalPreferencePositionMatrix[j][i] = TemporalPositionX - i;
+                                }
+
+                            }
+
+                            if (j < TemporalPositionY)
+                            {
+                                if (i >= TemporalPositionX)
+                                {
+                                    TemporalPreferencePositionMatrix[j][i] = i - TemporalPositionX + 2 * (TemporalPositionY - j) + 1;
+                                }
+                                else
+                                {
+                                    TemporalPreferencePositionMatrix[j][i] = TemporalPositionX - 1 + 2 * (TemporalPositionY - j) + 1;
+                                }
+                            }
+
+                            if (j > TemporalPositionY)
+                            {
+                                if (i >= TemporalPositionX)
+                                {
+                                    TemporalPreferencePositionMatrix[j][i] = i - TemporalPositionX + 2 * (j - TemporalPositionY) + 1;
+                                }
+                                else
+                                {
+                                    TemporalPreferencePositionMatrix[j][i] = TemporalPositionX - i + 2 * (j - TemporalPositionY) + 1;
+                                }
+                            }
+
+                            if (i == TemporalDestinationX && j == TemporalDestinationY)
+                            {
+                                TemporalPreferencePositionMatrix[j][i] = TemporalHeight * TemporalRow * TemporalColumn;
+                            }
+                        }
+                        else
+                        {
+                            if (i == TemporalPositionX && j == TemporalPositionY)
+                            {
+                                TemporalPreferencePositionMatrix[j][i] = 0;
+                            }
+                            else
+                            {
+                                if (i == TemporalDestinationX && j == TemporalDestinationY)
+                                {
+                                    TemporalPreferencePositionMatrix[j][i] = 1;
+                                }
+                                else
+                                {
+                                    if ((0 > TemporalDestinationX > TemporalColumn || 0 > TemporalDestinationY > TemporalRow) && TemporalCounterSecondPreferencePosition < 0)
+                                    {
+                                        TemporalCounterFirstPreferencePosition--;
+                                        TemporalCounterSecondPreferencePosition++;
+                                        TemporalPreferencePositionMatrix[j][i] = TemporalCounterFirstPreferencePosition++;
+                                    }
+                                    else
+                                    {
+                                        TemporalPreferencePositionMatrix[j][i] = TemporalCounterFirstPreferencePosition++;
+                                    }
+
+                                }
+                            }
+                        }
+
+                        if (TemporalDestinationX == TemporalPositionX && TemporalDestinationY == TemporalPositionY)
+                        {
+                            if (i == TemporalPositionX && j == TemporalPositionY)
+                            {
+                                TemporalPreferencePositionMatrix[j][i] = 0;
+                            }
+                            else
+                            {
+                                TemporalPreferencePositionMatrix[j][i] = TemporalHeight * TemporalColumn * TemporalRow;
+                            }
+                        }
+                    }
+                }
+            }
+
+            // Destination Preference Matrix 
+            if (TemporalCounterDisorder > 0)
+            {
+                for (int j = 0; j < TemporalRow; j++)
+                {
+                    for (int i = 0; i < TemporalColumn; i++)
+                    {
+                        if (TemporalStepsDestination > 0)
+                        {
+                            if (j == TemporalDestinationY)
+                            {
+                                if (i >= TemporalDestinationX)
+                                {
+                                    TemporalPreferenceDestinationMatrix[j][i] = i - TemporalDestinationX;
+                                }
+                                else
+                                {
+                                    TemporalPreferenceDestinationMatrix[j][i] = TemporalDestinationX - i;
+                                }
+                            }
+
+                            if (j < TemporalDestinationY)
+                            {
+                                if (i >= TemporalDestinationX)
+                                {
+                                    TemporalPreferenceDestinationMatrix[j][i] = i - TemporalDestinationX + 2 * (TemporalDestinationY - j) + 1;
+                                }
+                                else
+                                {
+                                    TemporalPreferenceDestinationMatrix[j][i] = TemporalDestinationX - 1 + 2 * (TemporalDestinationY - j) + 1;
+                                }
+                            }
+
+                            if (j > TemporalDestinationY)
+                            {
+                                if (i >= TemporalDestinationX)
+                                {
+                                    TemporalPreferenceDestinationMatrix[j][i] = i - TemporalDestinationX + 2 * (j - TemporalDestinationY) + 1;
+                                }
+                                else
+                                {
+                                    TemporalPreferenceDestinationMatrix[j][i] = TemporalDestinationX - i + 2 * (j - TemporalDestinationY) + 1;
+                                }
+                            }
+
+                            if (i == TemporalPositionX && j == TemporalPositionY)
+                            {
+                                TemporalPreferenceDestinationMatrix[j][i] = TemporalHeight * TemporalRow * TemporalColumn;
+                            }
+                        }
+                        else
+                        {
+                            if (i == TemporalDestinationX && j == TemporalDestinationY)
+                            {
+                                TemporalPreferenceDestinationMatrix[j][i] = 0;
+                            }
+                            else
+                            {
+                                TemporalPreferenceDestinationMatrix[j][i] = TemporalHeight * TemporalColumn * TemporalRow;
+                            }
+                        }
+
+                        if (TemporalDestinationX == TemporalPositionX && TemporalDestinationY == TemporalPositionY)
+                        {
+                            if (i == TemporalDestinationX && j == TemporalDestinationY)
+                            {
+                                TemporalPreferenceDestinationMatrix[j][i] = 0;
+                            }
+                            else
+                            {
+                                TemporalPreferenceDestinationMatrix[j][i] = TemporalHeight * TemporalColumn * TemporalRow;
+                            }
+                        }
+
+                    }
+                }
+            }
+
+            if (TemporalCounterDisorder > 0)
+            {
+                TemporalFreeVariationMatrix = TemporalFreeSpaceMatrix;
+            }
+
+            // Sequence Determination - Clearing the Position of Origin, Except for Position 
+            if (TemporalCounterDisorder > 0)
+            {
+                if (TemporalStepsPosition > 1)
+                {
+                    for (int s = 1; s < TemporalStepsPosition; s++)
+                    {
+                        int Reference = TemporalRow * TemporalHeight * TemporalColumn;
+                        int ValueX = TemporalRow * TemporalHeight * TemporalColumn;
+                        int ValueY = TemporalRow * TemporalHeight * TemporalColumn;
+                        int ValueZ = TemporalRow * TemporalHeight * TemporalColumn;
+
+                        for (int j = 0; j < TemporalRow; j++)
+                        {
+                            for (int i = 0; i < TemporalColumn; i++)
+                            {
+                                if (TemporalPreferencePositionMatrix[j][i] < Reference && TemporalPreferencePositionMatrix[j][i] != 0 && TemporalFreeVariationMatrix[j][i] > 0)
+                                {
+                                    Reference = TemporalPreferencePositionMatrix[j][i];
+                                    ValueX = i;
+                                    ValueY = j;
+                                    ValueZ = TemporalHeight - TemporalFreeVariationMatrix[j][i];
+                                }
+                            }
+                        }
+
+                        if (ValueX >= 0 && ValueX < TemporalColumn && ValueY < TemporalRow && ValueY >= 0 && ValueZ < TemporalHeight && ValueZ >= 0)
+                        {
+                            TemporalSequencePositionX.push_back(TemporalPositionX);
+                            TemporalSequencePositionY.push_back(TemporalPositionY);
+                            TemporalSequencePositionZ.push_back(TemporalHeight - TemporalFreeVariationMatrix[TemporalPositionY][TemporalPositionX] - 1);
+
+                            //Reverse Recording - Block over Each other
+                            if (TemporalCounterStepaHead == 1)
+                            {
+                                TemporalSequenceDestinationRecorderX.push_back(TemporalPositionX);
+                                TemporalSequenceDestinationRecorderY.push_back(TemporalPositionY);
+                                TemporalSequenceDestinationRecorderZ.push_back(TemporalHeight - TemporalFreeVariationMatrix[TemporalPositionY][TemporalPositionX] - 1);
+                            }
+
+                            TemporalFreeVariationMatrix[TemporalPositionY][TemporalPositionX] = TemporalFreeVariationMatrix[TemporalPositionY][TemporalPositionX] + 1;
+                            TemporalSequenceDestinationX.push_back(ValueX);
+                            TemporalSequenceDestinationY.push_back(ValueY);
+                            TemporalSequenceDestinationZ.push_back(ValueZ);
+                            TemporalFreeVariationMatrix[ValueY][ValueX] = TemporalFreeVariationMatrix[ValueY][ValueX] - 1;
+
+                            //Reverse Recording - Block over Each other
+                            if (TemporalCounterStepaHead == 1)
+                            {
+                                TemporalSequencePositionRecorderX.push_back(ValueX);
+                                TemporalSequencePositionRecorderY.push_back(ValueY);
+                                TemporalSequencePositionRecorderZ.push_back(ValueZ);
+                            }
+
+                        }
+                    }
+                }
+            }
+            
+            // Sequence Determination - Clearing the Position of Destination, All
+            if (TemporalCounterDisorder > 0)
+            {
+                if (TemporalStepsDestination > 0)
+                {
+                    for (int s = 0; s < TemporalStepsDestination; s++)
+                    {
+                        int Reference = TemporalRow * TemporalHeight * TemporalColumn;
+                        int ValueX = TemporalRow * TemporalHeight * TemporalColumn;
+                        int ValueY = TemporalRow * TemporalHeight * TemporalColumn;
+                        int ValueZ = TemporalRow * TemporalHeight * TemporalColumn;
+
+                        for (int j = 0; j < TemporalRow; j++)
+                        {
+                            for (int i = 0; i < TemporalColumn; i++)
+                            {
+                                if (TemporalPreferenceDestinationMatrix[j][i] < Reference && TemporalPreferenceDestinationMatrix[j][i] != 0 && TemporalFreeVariationMatrix[j][i] > 0)
+                                {
+                                    Reference = TemporalPreferenceDestinationMatrix[j][i];
+                                    ValueX = i;
+                                    ValueY = j;
+                                    ValueZ = TemporalHeight - TemporalFreeVariationMatrix[j][i];
+                                }
+                            }
+                        }
+
+                        if (ValueX >= 0 && ValueX < TemporalColumn && ValueY < TemporalRow && ValueY >= 0 && ValueZ < TemporalHeight && ValueZ >= 0)
+                        {
+                            TemporalSequencePositionX.push_back(TemporalDestinationX);
+                            TemporalSequencePositionY.push_back(TemporalDestinationY);
+                            TemporalSequencePositionZ.push_back(TemporalHeight - TemporalFreeVariationMatrix[TemporalDestinationY][TemporalDestinationX] - 1);
+                            TemporalFreeVariationMatrix[TemporalDestinationY][TemporalDestinationX] = TemporalFreeVariationMatrix[TemporalDestinationY][TemporalDestinationX] + 1;
+                            TemporalSequenceDestinationX.push_back(ValueX);
+                            TemporalSequenceDestinationY.push_back(ValueY);
+                            TemporalSequenceDestinationZ.push_back(ValueZ);
+                            TemporalFreeVariationMatrix[ValueY][ValueX] = TemporalFreeVariationMatrix[ValueY][ValueX] - 1;
+                        }
+                    }
+                }
+            }
+
+            // Translation of Objective to Destination
+            // Within Storage
+            if (TemporalCounterDisorder > 0)
+            {
+                if ((TemporalDestinationX >= 0 && TemporalDestinationX < TemporalColumn && TemporalDestinationY >= 0 && TemporalDestinationY < TemporalRow && TemporalDestinationZ >= 0 && TemporalDestinationZ < TemporalHeight) && (TemporalPositionX >= 0 && TemporalPositionX < TemporalColumn && TemporalPositionY >= 0 && TemporalPositionY < TemporalRow && TemporalPositionZ >= 0 && TemporalPositionZ < TemporalHeight))
+                {
+                    if (TemporalStepsPosition > 0)
+                    {
+                        TemporalSequencePositionX.push_back(TemporalPositionX);
+                        TemporalSequencePositionY.push_back(TemporalPositionY);
+                        TemporalSequencePositionZ.push_back(TemporalHeight - TemporalFreeVariationMatrix[TemporalPositionY][TemporalPositionX] - 1);
+                        TemporalFreeVariationMatrix[TemporalPositionY][TemporalPositionX] = TemporalFreeVariationMatrix[TemporalPositionY][TemporalPositionX] + 1;
+
+                        TemporalSequenceDestinationX.push_back(TemporalDestinationX);
+                        TemporalSequenceDestinationY.push_back(TemporalDestinationY);
+                        TemporalSequenceDestinationZ.push_back(TemporalHeight - TemporalFreeVariationMatrix[TemporalDestinationY][TemporalDestinationX]);
+                        TemporalFreeVariationMatrix[TemporalDestinationY][TemporalDestinationX] = TemporalFreeVariationMatrix[TemporalDestinationY][TemporalDestinationX] - 1;
+                    }
+                }
+            }
+
+            // Swapping Sequence
+            if (TemporalCounterDisorder > 0)
+            {
+                if ((TemporalDestinationX >= 0 && TemporalDestinationX < TemporalColumn && TemporalDestinationY >= 0 && TemporalDestinationY < TemporalRow && TemporalDestinationZ >= 0 && TemporalDestinationZ < TemporalHeight) && (TemporalPositionX >= 0 && TemporalPositionX < TemporalColumn && TemporalPositionY >= 0 && TemporalPositionY < TemporalRow && TemporalPositionZ >= 0 && TemporalPositionZ < TemporalHeight))
+                {
+                    if (TemporalStepsDestination > 0 && TemporalStepsPosition > 0)
+                    {
+                        TemporalSequencePositionX.push_back(TemporalSequenceDestinationX[TemporalStepsPosition + TemporalStepsDestination - 2]);
+                        TemporalSequencePositionY.push_back(TemporalSequenceDestinationY[TemporalStepsPosition + TemporalStepsDestination - 2]);
+                        TemporalSequencePositionZ.push_back(TemporalSequenceDestinationZ[TemporalStepsPosition + TemporalStepsDestination - 2]);
+                        TemporalFreeVariationMatrix[TemporalSequenceDestinationY[TemporalStepsPosition + TemporalStepsDestination - 2]][TemporalSequenceDestinationX[TemporalStepsPosition + TemporalStepsDestination - 2]] = TemporalFreeVariationMatrix[TemporalSequenceDestinationY[TemporalStepsPosition + TemporalStepsDestination - 2]][TemporalSequenceDestinationX[TemporalStepsPosition + TemporalStepsDestination - 2]] + 1;
+
+                        TemporalSequenceDestinationX.push_back(TemporalSequencePositionX[TemporalStepsPosition + TemporalStepsDestination - 1]);
+                        TemporalSequenceDestinationY.push_back(TemporalSequencePositionY[TemporalStepsPosition + TemporalStepsDestination - 1]);
+                        TemporalSequenceDestinationZ.push_back(TemporalSequencePositionZ[TemporalStepsPosition + TemporalStepsDestination - 1]);
+                        TemporalFreeVariationMatrix[TemporalSequencePositionY[TemporalStepsPosition + TemporalStepsDestination - 1]][TemporalSequencePositionX[TemporalStepsPosition + TemporalStepsDestination - 1]] = TemporalFreeVariationMatrix[TemporalSequencePositionY[TemporalStepsPosition + TemporalStepsDestination - 1]][TemporalSequencePositionX[TemporalStepsPosition + TemporalStepsDestination - 1]] - 1;
+                    }
+                }
+            }
+
+            // Fixing the place of Destination - Reverse
+            if (TemporalCounterDisorder > 0)
+            {
+                if ((TemporalDestinationX >= 0 && TemporalDestinationX < TemporalColumn && TemporalDestinationY >= 0 && TemporalDestinationY < TemporalRow && TemporalDestinationZ >= 0 && TemporalDestinationZ < TemporalHeight) && (TemporalPositionX >= 0 && TemporalPositionX < TemporalColumn && TemporalPositionY >= 0 && TemporalPositionY < TemporalRow && TemporalPositionZ >= 0 && TemporalPositionZ < TemporalHeight))
+                {
+                    if (TemporalStepsDestination > 1 && TemporalStepsPosition > 0)
+                    {
+                        for (int d = 0; d < TemporalStepsDestination - 1; d++)
+                        {
+                            TemporalSequencePositionX.push_back(TemporalSequenceDestinationX[TemporalStepsPosition + TemporalStepsDestination - 3 - d]);
+                            TemporalSequencePositionY.push_back(TemporalSequenceDestinationY[TemporalStepsPosition + TemporalStepsDestination - 3 - d]);
+                            TemporalSequencePositionZ.push_back(TemporalSequenceDestinationZ[TemporalStepsPosition + TemporalStepsDestination - 3 - d]);
+                            TemporalFreeVariationMatrix[TemporalSequenceDestinationY[TemporalStepsPosition + TemporalStepsDestination - 3 - d]][TemporalSequenceDestinationX[TemporalStepsPosition + TemporalStepsDestination - 3 - d]] = TemporalFreeVariationMatrix[TemporalSequenceDestinationY[TemporalStepsPosition + TemporalStepsDestination - 3 - d]][TemporalSequenceDestinationX[TemporalStepsPosition + TemporalStepsDestination - 3 - d]] + 1;
+
+                            TemporalSequenceDestinationX.push_back(TemporalSequencePositionX[TemporalStepsPosition + TemporalStepsDestination - 3 - d]);
+                            TemporalSequenceDestinationY.push_back(TemporalSequencePositionY[TemporalStepsPosition + TemporalStepsDestination - 3 - d]);
+                            TemporalSequenceDestinationZ.push_back(TemporalSequencePositionZ[TemporalStepsPosition + TemporalStepsDestination - 3 - d]);
+                            TemporalFreeVariationMatrix[TemporalSequencePositionY[TemporalStepsPosition + TemporalStepsDestination - 3 - d]][TemporalSequencePositionX[TemporalStepsPosition + TemporalStepsDestination - 3 - d]] = TemporalFreeVariationMatrix[TemporalSequencePositionY[TemporalStepsPosition + TemporalStepsDestination - 3 - d]][TemporalSequencePositionX[TemporalStepsPosition + TemporalStepsDestination - 3 - d]] - 1;
+                        }
+                    }
+                }
+            }
+
+            // Fixing the place of Origin - Reverse
+            if (TemporalCounterDisorder > 0)
+            {
+                if ((TemporalDestinationX >= 0 && TemporalDestinationX < TemporalColumn && TemporalDestinationY >= 0 && TemporalDestinationY < TemporalRow && TemporalDestinationZ >= 0 && TemporalDestinationZ < TemporalHeight) && (TemporalPositionX >= 0 && TemporalPositionX < TemporalColumn && TemporalPositionY >= 0 && TemporalPositionY < TemporalRow && TemporalPositionZ >= 0 && TemporalPositionZ < TemporalHeight))
+                {
+                    if (TemporalStepsDestination > 0 && TemporalStepsPosition > 1)
+                    {
+                        for (int d = 0; d < TemporalStepsPosition - 1; d++)
+                        {
+                            TemporalSequencePositionX.push_back(TemporalSequenceDestinationX[TemporalStepsPosition - d - 2]);
+                            TemporalSequencePositionY.push_back(TemporalSequenceDestinationY[TemporalStepsPosition - d - 2]);
+                            TemporalSequencePositionZ.push_back(TemporalSequenceDestinationZ[TemporalStepsPosition - d - 2]);
+                            TemporalFreeVariationMatrix[TemporalSequenceDestinationY[TemporalStepsPosition - d - 2]][TemporalSequenceDestinationX[TemporalStepsPosition - d - 2]] = TemporalFreeVariationMatrix[TemporalSequenceDestinationY[TemporalStepsPosition - d - 2]][TemporalSequenceDestinationX[TemporalStepsPosition - d - 2]] + 1;
+                            TemporalSequenceDestinationX.push_back(TemporalSequencePositionX[TemporalStepsPosition - d - 2]);
+                            TemporalSequenceDestinationY.push_back(TemporalSequencePositionY[TemporalStepsPosition - d - 2]);
+                            TemporalSequenceDestinationZ.push_back(TemporalSequencePositionZ[TemporalStepsPosition - d - 2]);
+                            TemporalFreeVariationMatrix[TemporalSequencePositionY[TemporalStepsPosition - d - 2]][TemporalSequencePositionX[TemporalStepsPosition - d - 2]] = TemporalFreeVariationMatrix[TemporalSequencePositionY[TemporalStepsPosition - d - 2]][TemporalSequencePositionX[TemporalStepsPosition - d - 2]] - 1;
+                        }
+                    }
+                }
+            }
+
+
+            // Fixing the place of Origin - Reverse, First Perculiar Exception
+            if (TemporalCounterDisorder > 0)
+            {
+                if ((TemporalDestinationX >= 0 && TemporalDestinationX < TemporalColumn && TemporalDestinationY >= 0 && TemporalDestinationY < TemporalRow && TemporalDestinationZ >= 0 && TemporalDestinationZ < TemporalHeight) && (TemporalPositionX >= 0 && TemporalPositionX < TemporalColumn && TemporalPositionY >= 0 && TemporalPositionY < TemporalRow && TemporalPositionZ >= 0 && TemporalPositionZ < TemporalHeight))
+                {
+                    if (TemporalStepsDestination == 0 && TemporalStepsPosition > 1 && TemporalCounterStepaHead == 0 && TemporalCounterBlockOver == 0)
+                    {
+                        for (int d = 0; d < TemporalStepsPosition - 1; d++)
+                        {
+                            TemporalSequencePositionX.push_back(TemporalSequenceDestinationX[TemporalStepsPosition - d - 2]);
+                            TemporalSequencePositionY.push_back(TemporalSequenceDestinationY[TemporalStepsPosition - d - 2]);
+                            TemporalSequencePositionZ.push_back(TemporalSequenceDestinationZ[TemporalStepsPosition - d - 2]);
+                            TemporalFreeVariationMatrix[TemporalSequenceDestinationY[TemporalStepsPosition - d - 2]][TemporalSequenceDestinationX[TemporalStepsPosition - d - 2]] = TemporalFreeVariationMatrix[TemporalSequenceDestinationY[TemporalStepsPosition - d - 2]][TemporalSequenceDestinationX[TemporalStepsPosition - d - 2]] + 1;
+
+                            TemporalSequenceDestinationX.push_back(TemporalSequencePositionX[TemporalStepsPosition - d - 2]);
+                            TemporalSequenceDestinationY.push_back(TemporalSequencePositionY[TemporalStepsPosition - d - 2]);
+                            TemporalSequenceDestinationZ.push_back(TemporalSequencePositionZ[TemporalStepsPosition - d - 2] - 1);
+                            TemporalFreeVariationMatrix[TemporalSequencePositionY[TemporalStepsPosition - d - 2]][TemporalSequencePositionX[TemporalStepsPosition - d - 2]] = TemporalFreeVariationMatrix[TemporalSequencePositionY[TemporalStepsPosition - d - 2]][TemporalSequencePositionX[TemporalStepsPosition - d - 2]] - 1;
+
+                        }
+                    }
+                }
+            }
+
+
+            // Fixing the place of Origin - Reverse, Second Perculiar Exception
+            if (TemporalCounterDisorder > 0)
+            {
+                if ((TemporalDestinationX >= 0 && TemporalDestinationX < TemporalColumn && TemporalDestinationY >= 0 && TemporalDestinationY < TemporalRow && TemporalDestinationZ >= 0 && TemporalDestinationZ < TemporalHeight) && (TemporalPositionX >= 0 && TemporalPositionX < TemporalColumn && TemporalPositionY >= 0 && TemporalPositionY < TemporalRow && TemporalPositionZ >= 0 && TemporalPositionZ < TemporalHeight))
+                {
+                    if (TemporalStepsDestination == 0 && TemporalStepsPosition > 1 && TemporalCounterStepaHead == 0 && TemporalCounterBlockOver == 1)
+                    {
+                        int ExtraSpace = 0;
+
+                        for (int d = 0; d < TemporalStepsPosition - 1; d++)
+                        {
+                            TemporalSequencePositionX.push_back(TemporalSequenceDestinationX[TemporalStepsPosition - d - 2]);
+                            TemporalSequencePositionY.push_back(TemporalSequenceDestinationY[TemporalStepsPosition - d - 2]);
+                            TemporalSequencePositionZ.push_back(TemporalSequenceDestinationZ[TemporalStepsPosition - d - 2]);
+                            TemporalFreeVariationMatrix[TemporalSequenceDestinationY[TemporalStepsPosition - d - 2]][TemporalSequenceDestinationX[TemporalStepsPosition - d - 2]] = TemporalFreeVariationMatrix[TemporalSequenceDestinationY[TemporalStepsPosition - d - 2]][TemporalSequenceDestinationX[TemporalStepsPosition - d - 2]] + 1;
+
+                            TemporalSequenceDestinationX.push_back(TemporalSequencePositionX[TemporalStepsPosition - d - 2]);
+                            TemporalSequenceDestinationY.push_back(TemporalSequencePositionY[TemporalStepsPosition - d - 2]);
+                            TemporalSequenceDestinationZ.push_back(TemporalSequencePositionZ[TemporalStepsPosition - d - 2] - 1 + ExtraSpace);
+                            TemporalFreeVariationMatrix[TemporalSequencePositionY[TemporalStepsPosition - d - 2]][TemporalSequencePositionX[TemporalStepsPosition - d - 2]] = TemporalFreeVariationMatrix[TemporalSequencePositionY[TemporalStepsPosition - d - 2]][TemporalSequencePositionX[TemporalStepsPosition - d - 2]] - 1;
+
+                            if (d == 0)
+                            {
+                                TemporalSequencePositionX.push_back(TemporalDestinationX);
+                                TemporalSequencePositionY.push_back(TemporalDestinationY);
+                                TemporalSequencePositionZ.push_back(TemporalDestinationZ);
+                                TemporalFreeVariationMatrix[TemporalDestinationY][TemporalDestinationX] = TemporalFreeVariationMatrix[TemporalDestinationY][TemporalDestinationX] + 1;
+
+                                TemporalSequenceDestinationX.push_back(TemporalPositionX);
+                                TemporalSequenceDestinationY.push_back(TemporalPositionY);
+                                TemporalSequenceDestinationZ.push_back(TemporalPositionZ + 1);
+                                TemporalFreeVariationMatrix[TemporalPositionY][TemporalPositionX] = TemporalFreeVariationMatrix[TemporalPositionY][TemporalPositionX] - 1;
+
+
+
+                                ExtraSpace = 1;
+                            }
+                        }
+                        TemporalCounterBlockOver = 0;
+
+                        //Correcting True Trajectory
+                        TemporalDestinationX = TemporalPositionX;
+                        TemporalDestinationY = TemporalPositionY;
+                        TemporalDestinationZ = TemporalPositionZ + 1;
+                    }
+
+                }
+            }
+
+            // Rebooting Counter
+            if (TemporalCounterDisorder > 0)
+            {
+                if ((TemporalDestinationX >= 0 && TemporalDestinationX < TemporalColumn && TemporalDestinationY >= 0 && TemporalDestinationY < TemporalRow && TemporalDestinationZ >= 0 && TemporalDestinationZ < TemporalHeight) && (TemporalPositionX >= 0 && TemporalPositionX < TemporalColumn && TemporalPositionY >= 0 && TemporalPositionY < TemporalRow && TemporalPositionZ >= 0 && TemporalPositionZ < TemporalHeight))
+                {
+                    if (TemporalCounterStepaHead == 2)
+                    {
+                        if (TemporalSequenceDestinationRecorderX.size() == TemporalSequenceDestinationRecorderY.size() && TemporalSequenceDestinationRecorderY.size() == TemporalSequenceDestinationRecorderZ.size())
+                        {
+                            if (TemporalSequenceDestinationRecorderX.size() == TemporalSequencePositionRecorderX.size() && TemporalSequencePositionRecorderX.size() == TemporalSequencePositionRecorderY.size() && TemporalSequencePositionRecorderY.size() == TemporalSequencePositionRecorderZ.size())
+                            {
+                                for (int r = 0; r < TemporalSequenceDestinationRecorderX.size(); r++)
+                                {
+                                    TemporalSequencePositionX.push_back(TemporalSequencePositionRecorderX[r]);
+                                    TemporalSequencePositionY.push_back(TemporalSequencePositionRecorderY[r]);
+                                    TemporalSequencePositionZ.push_back(TemporalSequencePositionRecorderZ[r]);
+                                    TemporalFreeVariationMatrix[TemporalSequencePositionRecorderY[r]][TemporalSequencePositionRecorderX[r]] = TemporalFreeVariationMatrix[TemporalSequencePositionRecorderY[r]][TemporalSequencePositionRecorderX[r]] + 1;
+
+                                    TemporalSequenceDestinationX.push_back(TemporalSequenceDestinationRecorderX[r]);
+                                    TemporalSequenceDestinationY.push_back(TemporalSequenceDestinationRecorderY[r]);
+                                    TemporalSequenceDestinationZ.push_back(TemporalSequenceDestinationRecorderZ[r]);
+                                    TemporalFreeVariationMatrix[TemporalSequenceDestinationRecorderY[r]][TemporalSequenceDestinationRecorderX[r]] = TemporalFreeVariationMatrix[TemporalSequenceDestinationRecorderY[r]][TemporalSequenceDestinationRecorderX[r]] - 1;
+
+                                }
+                            }
+                        }
+
+
+                        TemporalSequenceDestinationRecorderX.clear();
+                        TemporalSequenceDestinationRecorderX.swap(EmptyVector);
+
+                        TemporalSequenceDestinationRecorderY.clear();
+                        TemporalSequenceDestinationRecorderY.swap(EmptyVector);
+
+                        TemporalSequenceDestinationRecorderZ.clear();
+                        TemporalSequenceDestinationRecorderZ.swap(EmptyVector);
+
+                        TemporalSequencePositionRecorderX.clear();
+                        TemporalSequencePositionRecorderX.swap(EmptyVector);
+
+                        TemporalSequencePositionRecorderY.clear();
+                        TemporalSequencePositionRecorderY.swap(EmptyVector);
+
+                        TemporalSequencePositionRecorderZ.clear();
+                        TemporalSequencePositionRecorderZ.swap(EmptyVector);
+                    }
+                }
+            }
+
+            if (TemporalCounterDisorder > 0)
+            {
+                if ((TemporalDestinationX >= 0 && TemporalDestinationX < TemporalColumn && TemporalDestinationY >= 0 && TemporalDestinationY < TemporalRow && TemporalDestinationZ >= 0 && TemporalDestinationZ < TemporalHeight) && (TemporalPositionX >= 0 && TemporalPositionX < TemporalColumn && TemporalPositionY >= 0 && TemporalPositionY < TemporalRow && TemporalPositionZ >= 0 && TemporalPositionZ < TemporalHeight))
+                {
+                    if (TemporalCounterStepaHead > 0)
+                    {
+                        if (TemporalSequenceDestinationX.size() == TemporalSequenceDestinationY.size() && TemporalSequenceDestinationY.size() == TemporalSequenceDestinationZ.size())
+                        {
+                            if (TemporalSequencePositionX.size() == TemporalSequencePositionY.size() && TemporalSequencePositionY.size() == TemporalSequencePositionZ.size())
+                            {
+                                for (int s = 0; s < TemporalSequenceDestinationX.size(); s++)
+                                {
+                                    int CopyPriority = 0;
+                                    int CopyComparerPriority = 0;
+                                    int CopyMemory = 0;
+                                    int CopyVisual = 0;
+
+                                    TemporalSequenceDestinationReverseX.push_back(TemporalSequenceDestinationX[s]);
+                                    TemporalSequenceDestinationReverseY.push_back(TemporalSequenceDestinationY[s]);
+                                    TemporalSequenceDestinationReverseZ.push_back(TemporalSequenceDestinationZ[s]);
+
+                                    TemporalSequencePositionReverseX.push_back(TemporalSequencePositionX[s]);
+                                    TemporalSequencePositionReverseY.push_back(TemporalSequencePositionY[s]);
+                                    TemporalSequencePositionReverseZ.push_back(TemporalSequencePositionZ[s]);
+
+                                    if (0 <= TemporalSequencePositionZ[s] && TemporalSequencePositionZ[s] < TemporalHeight && 0 <= TemporalSequencePositionY[s] && TemporalSequencePositionY[s] < TemporalRow && 0 <= TemporalSequencePositionX[s] && TemporalSequencePositionX[s] < TemporalColumn)
+                                    {
+                                        CopyPriority = TemporalPriorityDinamicTensor[TemporalSequencePositionZ[s]][TemporalSequencePositionY[s]][TemporalSequencePositionX[s]];
+                                        CopyComparerPriority = TemporalPriorityComparerTensor[TemporalSequencePositionZ[s]][TemporalSequencePositionY[s]][TemporalSequencePositionX[s]];
+                                        CopyMemory = TemporalMemoryTensor[TemporalSequencePositionZ[s]][TemporalSequencePositionY[s]][TemporalSequencePositionX[s]];
+                                        CopyVisual = TemporalLevelViewTensor[TemporalSequencePositionZ[s]][TemporalSequencePositionY[s]][TemporalSequencePositionX[s]];
+
+                                        TemporalLevelViewTensor[TemporalSequencePositionZ[s]][TemporalSequencePositionY[s]][TemporalSequencePositionX[s]] = 0;
+                                        TemporalPriorityDinamicTensor[TemporalSequencePositionZ[s]][TemporalSequencePositionY[s]][TemporalSequencePositionX[s]] = 0;
+                                        TemporalPriorityComparerTensor[TemporalSequencePositionZ[s]][TemporalSequencePositionY[s]][TemporalSequencePositionX[s]] = 0;
+                                        TemporalMemoryTensor[TemporalSequencePositionZ[s]][TemporalSequencePositionY[s]][TemporalSequencePositionX[s]] = 0;
+                                    }
+
+                                    if (0 <= TemporalSequenceDestinationZ[s] && TemporalSequenceDestinationZ[s] < TemporalHeight && 0 <= TemporalSequenceDestinationY[s] && TemporalSequenceDestinationY[s] < TemporalRow && 0 <= TemporalSequenceDestinationX[s] && TemporalSequenceDestinationX[s] < TemporalColumn)
+                                    {
+                                        TemporalPriorityDinamicTensor[TemporalSequenceDestinationZ[s]][TemporalSequenceDestinationY[s]][TemporalSequenceDestinationX[s]] = CopyPriority;
+                                        TemporalPriorityComparerTensor[TemporalSequenceDestinationZ[s]][TemporalSequenceDestinationY[s]][TemporalSequenceDestinationX[s]] = CopyComparerPriority;
+                                        TemporalMemoryTensor[TemporalSequenceDestinationZ[s]][TemporalSequenceDestinationY[s]][TemporalSequenceDestinationX[s]] = CopyMemory;
+                                        TemporalLevelViewTensor[TemporalSequenceDestinationZ[s]][TemporalSequenceDestinationY[s]][TemporalSequenceDestinationX[s]] = CopyVisual;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            if (TemporalCounterDisorder > 0)
+            {
+                if (TemporalCounterStepaHead == 0 && TemporalCounterSumaHead == 0)
+                {
+                    if (CounterShortestPath > TemporalSequenceDestinationX.size())
+                    {
+                        CounterShortestPath = TemporalSequenceDestinationX.size();
+
+                        if (TemporalPositionX >= 0 && TemporalPositionX < TemporalColumn && TemporalPositionY >= 0 && TemporalPositionY < TemporalRow && TemporalPositionZ >= 0 && TemporalPositionZ < TemporalHeight)
+                        {
+                            TemporalPositionComparerX = TemporalPositionX;
+                            TemporalPositionComparerY = TemporalPositionY;
+                            TemporalPositionComparerZ = TemporalPositionZ;
+                        }
+
+                        if (TemporalDestinationX >= 0 && TemporalDestinationX < TemporalColumn && TemporalDestinationY >= 0 && TemporalDestinationY < TemporalRow && TemporalDestinationZ >= 0 && TemporalDestinationZ < TemporalHeight)
+                        {
+                            TemporalDestinationComparerX = TemporalDestinationX;
+                            TemporalDestinationComparerY = TemporalDestinationY;
+                            TemporalDestinationComparerZ = TemporalDestinationZ;
+                        }
+
+                    }
+                }
+                else
+                {
+                    if (TemporalCounterStepaHead == 1)
+                    {
+                        SumShortestPath = TemporalSequenceDestinationX.size();
+                        TemporalCounterSumaHead = 1;
+                    }
+                }
+
+                if (TemporalCounterSumaHead == 1 && TemporalCounterStepaHead == 2)
+                {
+                    if (CounterShortestPath + SumShortestPath > TemporalSequenceDestinationX.size())
+                    {
+                        CounterShortestPath = TemporalSequenceDestinationX.size() + SumShortestPath;
+
+                        if (TemporalDestinationStepaHeadX >= 0 && TemporalDestinationStepaHeadX < TemporalColumn && TemporalDestinationStepaHeadY >= 0 && TemporalDestinationStepaHeadY < TemporalRow && TemporalDestinationStepaHeadZ >= 0 && TemporalDestinationStepaHeadZ < TemporalHeight)
+                        {
+                            TemporalPositionComparerX = TemporalDestinationX;
+                            TemporalPositionComparerY = TemporalDestinationY;
+                            TemporalPositionComparerZ = TemporalPositionComparerCopyZ;
+
+                            TemporalDestinationComparerX = TemporalDestinationX;
+                            TemporalDestinationComparerY = TemporalDestinationY;
+                            TemporalDestinationComparerZ = TemporalDestinationZ;
+                        }
+
+                    }
+
+                    SumShortestPath = 0;
+                    TemporalCounterSumaHead = 0;
+
+                    if (TemporalSequenceDestinationReverseX.size() > 0)
+                    {
+                        for (int s = TemporalSequenceDestinationReverseX.size() - 1; s >= 0; s--)
+                        {
+                            int CopyPriority = 0;
+                            int CopyComparerPriority = 0;
+                            int CopyMemory = 0;
+                            int CopyVisual = 0;
+
+                            if (0 <= TemporalSequenceDestinationReverseZ[s] && TemporalSequenceDestinationReverseZ[s] < TemporalHeight && 0 <= TemporalSequenceDestinationReverseY[s] && TemporalSequenceDestinationReverseY[s] < TemporalRow && 0 <= TemporalSequenceDestinationReverseX[s] && TemporalSequenceDestinationReverseX[s] < TemporalColumn)
+                            {
+                                CopyPriority = TemporalPriorityDinamicTensor[TemporalSequenceDestinationReverseZ[s]][TemporalSequenceDestinationReverseY[s]][TemporalSequenceDestinationReverseX[s]];
+                                CopyComparerPriority = TemporalPriorityComparerTensor[TemporalSequenceDestinationReverseZ[s]][TemporalSequenceDestinationReverseY[s]][TemporalSequenceDestinationReverseX[s]];
+                                CopyMemory = TemporalMemoryTensor[TemporalSequenceDestinationReverseZ[s]][TemporalSequenceDestinationReverseY[s]][TemporalSequenceDestinationReverseX[s]];
+                                CopyVisual = TemporalLevelViewTensor[TemporalSequenceDestinationReverseZ[s]][TemporalSequenceDestinationReverseY[s]][TemporalSequenceDestinationReverseX[s]];
+
+                                TemporalLevelViewTensor[TemporalSequenceDestinationReverseZ[s]][TemporalSequenceDestinationReverseY[s]][TemporalSequenceDestinationReverseX[s]] = 0;
+                                TemporalPriorityDinamicTensor[TemporalSequenceDestinationReverseZ[s]][TemporalSequenceDestinationReverseY[s]][TemporalSequenceDestinationReverseX[s]] = 0;
+                                TemporalPriorityComparerTensor[TemporalSequenceDestinationReverseZ[s]][TemporalSequenceDestinationReverseY[s]][TemporalSequenceDestinationReverseX[s]] = 0;
+                                TemporalMemoryTensor[TemporalSequenceDestinationReverseZ[s]][TemporalSequenceDestinationReverseY[s]][TemporalSequenceDestinationReverseX[s]] = 0;
+                            }
+
+                            if (0 <= TemporalSequencePositionReverseZ[s] && TemporalSequencePositionReverseZ[s] < TemporalHeight && 0 <= TemporalSequencePositionReverseY[s] && TemporalSequencePositionReverseY[s] < TemporalRow && 0 <= TemporalSequencePositionReverseX[s] && TemporalSequencePositionReverseX[s] < TemporalColumn)
+                            {
+                                TemporalPriorityDinamicTensor[TemporalSequencePositionReverseZ[s]][TemporalSequencePositionReverseY[s]][TemporalSequencePositionReverseX[s]] = CopyPriority;
+                                TemporalPriorityComparerTensor[TemporalSequencePositionReverseZ[s]][TemporalSequencePositionReverseY[s]][TemporalSequencePositionReverseX[s]] = CopyComparerPriority;
+                                TemporalMemoryTensor[TemporalSequencePositionReverseZ[s]][TemporalSequencePositionReverseY[s]][TemporalSequencePositionReverseX[s]] = CopyMemory;
+                                TemporalLevelViewTensor[TemporalSequencePositionReverseZ[s]][TemporalSequencePositionReverseY[s]][TemporalSequencePositionReverseX[s]] = CopyVisual;
+                            }
+
+                        }
+                    }
+
+                    if (TemporalCounterStepaHead == 2)
+                    {
+                        TemporalSequenceDestinationReverseX.clear();
+                        TemporalSequenceDestinationReverseX.swap(EmptyVector);
+
+                        TemporalSequenceDestinationReverseY.clear();
+                        TemporalSequenceDestinationReverseY.swap(EmptyVector);
+
+                        TemporalSequenceDestinationReverseZ.clear();
+                        TemporalSequenceDestinationReverseZ.swap(EmptyVector);
+
+                        TemporalSequencePositionReverseX.clear();
+                        TemporalSequencePositionReverseX.swap(EmptyVector);
+
+                        TemporalSequencePositionReverseY.clear();
+                        TemporalSequencePositionReverseY.swap(EmptyVector);
+
+                        TemporalSequencePositionReverseZ.clear();
+                        TemporalSequencePositionReverseZ.swap(EmptyVector);
+
+
+                        TemporalCounterStepaHead = 0;
+                    }
+                }
+            }
+
+
+
+        }
+
+        if ((TemporalPositionX >= 0 && TemporalPositionX < TemporalColumn && TemporalPositionY >= 0 && TemporalPositionY < TemporalRow && TemporalPositionZ >= 0 && TemporalPositionZ < TemporalHeight) && (TemporalDestinationX >= 0 && TemporalDestinationX < TemporalColumn && TemporalDestinationY >= 0 && TemporalDestinationY < TemporalRow && TemporalDestinationZ >= 0 && TemporalDestinationZ < TemporalHeight))
+        {
+            Coordinates.push_back(TemporalPositionX);
+            Coordinates.push_back(TemporalPositionY);
+            Coordinates.push_back(TemporalPositionZ);
+
+            Coordinates.push_back(TemporalDestinationX);
+            Coordinates.push_back(TemporalDestinationY);
+            Coordinates.push_back(TemporalDestinationZ);
+        }
+        else
+        {
+            Coordinates.push_back(-1);
+            Coordinates.push_back(-1);
+            Coordinates.push_back(-1);
+
+            Coordinates.push_back(-1);
+            Coordinates.push_back(-1);
+            Coordinates.push_back(-1);
+        }
+
+
+    return Coordinates;
+
+}
