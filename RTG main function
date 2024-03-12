@@ -1,0 +1,3139 @@
+#include <iostream>
+#include <vector>
+#include <string>
+#include <stdexcept>
+#include <windows.h>
+#include <time.h>
+#include <conio.h>
+#include "ShuffleMode.h"
+
+
+int main()
+{
+    // Dimensions
+    int Row;
+    int Column;
+    int Height;
+
+    // Shuffle Mode Coordintes
+    std::vector<int>  ShuffleModeCoordinates;
+    int ShuffleModeOn = 0;
+    std::string ShuffleModeOff;
+
+    // Default Origin
+    int PositionX = 0;
+    int PositionY = -1;
+    int PositionZ = 0;
+
+    // One Step a head
+    int PositionCopyX;
+    int PositionCopyY;
+    int PositionCopyZ;
+
+    // Block Serial Number
+    int BlockSerial = 0;
+
+    // Default Destination
+    int DestinationX = -1;
+    int DestinationY = 0;
+    int DestinationZ = 0;
+
+    // One Step a head
+    int DestinationCopyX;
+    int DestinationCopyY;
+    int DestinationCopyZ;
+
+    // Skiping Serial Number
+    int Counter11 = 0;
+    int Counter12 = 0;
+    int Counter13 = 0;
+
+    // Start Condition
+    int StartButton = 1;
+
+    // Command
+    std::string Command;
+
+    // OCR Emulation
+    std::string SerialName;
+
+    int PriorityNumber = 0;
+    int PrioritySwap = 0;
+
+    // ???
+    int EntryRecognition = 1;
+    int ExitRecognition = 0;
+
+    // Numbers of Steps
+    int StepsPosition = 0;
+    int StepsDestination = 0;
+    std::vector<std::vector<int>> FreeSpaceMatrix;
+    std::vector<std::vector<int>> FreeVariationMatrix;
+
+    // Preference of Movement
+    std::vector<std::vector<int>> PreferencePositionMatrix;
+    std::vector<std::vector<int>> PreferenceDestinationMatrix;
+    int Counter5 = 2;
+    int Counter6 = 0;
+
+    // Sequence Destination
+    std::vector<int> SequenceDestinationX;
+    std::vector<int> SequenceDestinationY;
+    std::vector<int> SequenceDestinationZ;
+
+    // Sequence Destination - Recorder
+    std::vector<int> SequenceDestinationRecorderX;
+    std::vector<int> SequenceDestinationRecorderY;
+    std::vector<int> SequenceDestinationRecorderZ;
+
+    // Sequence Position
+    std::vector<int> SequencePositionX;
+    std::vector<int> SequencePositionY;
+    std::vector<int> SequencePositionZ;
+
+    // Sequence Position - Recorder
+    std::vector<int> SequencePositionRecorderX;
+    std::vector<int> SequencePositionRecorderY;
+    std::vector<int> SequencePositionRecorderZ;
+
+    // Visual Aspects
+    std::vector<std::vector<std::vector<int>>> LevelViewTensor;
+    std::vector<std::vector<int>> PlanViewMatrix;
+    int VisualEntry = 0;
+    int VisualExit = 0;
+
+    // Maximun Digit
+    int Counter0 = 1;
+    int Counter1 = 1;
+    int MaximumDigit = 0;
+
+    // For Writing
+    int Counter2 = 1;
+    int Digit = 0;
+    int InitialSpace = 0;
+
+    // Memory Aspects
+    std::vector<std::vector<std::vector<int>>> MemoryTensor;
+    int MemoryEntry = 0;
+    int MemoryExit = 0;
+
+    // Priority Aspects
+    std::vector<std::vector<std::vector<int>>> PriorityStaticTensor;
+    std::vector<std::vector<std::vector<int>>> PriorityDinamicTensor;
+    std::vector<std::vector<std::vector<int>>> PriorityShuffleTensor;
+    int PriorityEntry = 0;
+    int PriorityExit = 0;
+
+    // Name Aspects
+    std::vector<std::vector<std::vector<std::string>>> NameTensor;
+    std::string NameEntry;
+    std::string NameExit;
+
+    // Numbers of container
+    int SerialNumber = 0;
+
+
+    //Insert Initiall Dimensions
+    std::cout << std::endl;
+    do
+    {
+        std::cin.clear();
+        std::cout << "    Introduce numbers of rows: ";
+        std::cin >> Row;
+
+        if (std::cin.fail())
+        {
+            std::cin.clear();
+            std::cin.ignore();
+            std::cout << "    Observation: Please introduce a integer";
+            std::cout << std::endl;
+            std::cout << std::endl;
+        }
+        else
+        {
+            if (Row <= 0)
+            {
+                std::cout << "    Observation: Please introduce a number greater than 0";
+                std::cout << std::endl;
+                std::cout << std::endl;
+            }
+        }
+    } while (!(std::cin) || Row < 0 || Row == 0);
+
+    do
+    {
+        std::cin.clear();
+        std::cout << "    Introduce numbers of columns: ";
+        std::cin >> Column;
+
+        if (std::cin.fail())
+        {
+            std::cin.clear();
+            std::cin.ignore();
+            std::cout << "    Observation: Please introduce a integer";
+            std::cout << std::endl;
+            std::cout << std::endl;
+        }
+        else
+        {
+            if (Column <= 0)
+            {
+                std::cout << "    Observation: Please introduce a number greater than 0";
+                std::cout << std::endl;
+                std::cout << std::endl;
+            }
+        }
+    } while (!(std::cin) || Column < 0 || Column == 0);
+
+    do
+    {
+        std::cin.clear();
+        std::cout << "    Introduce numbers of levels: ";
+        std::cin >> Height;
+        if (std::cin.fail())
+        {
+            std::cin.clear();
+            std::cin.ignore();
+            std::cout << "    Observation: Please introduce a integer";
+            std::cout << std::endl;
+            std::cout << std::endl;
+        }
+        else
+        {
+            if (Height <= 0)
+            {
+                std::cout << "    Observation: Please introduce a number greater than 0";
+                std::cout << std::endl;
+                std::cout << std::endl;
+            }
+        }
+    } while (!(std::cin) || Height < 0 || Height == 0);
+
+    // Free Space on Top
+    Height++;
+
+    // Create Space
+    for (int k = 0; k < Height; k++)
+    {
+        std::vector<std::vector<int>> H;
+        std::vector<std::vector<std::string>> G;
+        for (int j = 0; j < Row; j++)
+        {
+            std::vector<int> F;
+            std::vector<int> O;
+            std::vector<std::string> P;
+            for (int i = 0; i < Column; i++)
+            {
+                F.push_back(0);
+                O.push_back(0);
+                P.push_back("N/A");
+            }
+            H.push_back(F);
+            G.push_back(P);
+            PlanViewMatrix.push_back(O);
+            FreeSpaceMatrix.push_back(O);
+            PreferencePositionMatrix.push_back(O);
+            PreferenceDestinationMatrix.push_back(O);
+        }
+        LevelViewTensor.push_back(H);
+        PriorityStaticTensor.push_back(H);
+        PriorityDinamicTensor.push_back(H);
+        PriorityShuffleTensor.push_back(H);
+        MemoryTensor.push_back(H);
+        NameTensor.push_back(G);
+    }
+
+    // Creation of Matrix Criteria of Static Priority
+    int Counter8 = 1;
+    for (int k = 0; k < Height; k++)
+    {
+        for (int j = 0; j < Row; j++)
+        {
+            for (int i = 0; i < Column; i++)
+            {
+
+                if (k == Height - 1)
+                {
+
+                    PriorityStaticTensor[k][j][i] = Row * Column * Height;
+
+                }
+                else
+                {
+                    PriorityStaticTensor[k][j][i] = Counter8;
+                    Counter8++;
+                }
+            }
+        }
+    }
+
+    // Creation of Matrix Criteria of Shuffle Priority
+    int Counter9 = 1;
+    for (int k = Height - 1; k >= 0; k--)
+    {
+        for (int j = 0; j < Row; j++)
+        {
+            for (int i = 0; i < Column; i++)
+            {
+                if (k == Height - 1)
+                {
+                    PriorityShuffleTensor[k][j][i] = Row * Column * Height;
+                }
+                else
+                {
+                    PriorityShuffleTensor[k][j][i] = Counter9;
+                    Counter9++;
+                }
+            }
+        }
+    }
+
+    std::cout << std::endl;
+    Counter0 = Row * Column * Height;
+
+    // Determine Maximun Digit for Spacing
+    for (int u = 0; Counter0 > 0; u++)
+    {
+        Counter0 = Counter0 / 10;
+        MaximumDigit++;
+    }
+
+    // Ignore the last enter
+    std::cin.ignore();
+
+    //Begining of the While Loop
+    while (StartButton)
+    {
+
+
+        std::printf("\033c");
+        //Animation 
+        if (SequenceDestinationX.size() == SequenceDestinationY.size() && SequenceDestinationY.size() == SequenceDestinationZ.size())
+        {
+            if (SequencePositionX.size() == SequencePositionY.size() && SequencePositionY.size() == SequencePositionZ.size())
+            {
+                for (int s = 0; s < SequenceDestinationX.size(); s++)
+                {
+                    std::printf("\033c");
+                    int CopyVisual = 0;
+                    int CopyDepth = 0;
+
+                    // Initial Animation Position
+                    for (int a = 1; a <= 5; a++)
+                    {
+                        if (SequencePositionZ[s] == 0 && SequencePositionY[s] == -1 && SequencePositionX[s] == 0)
+                        {
+                            VisualEntry = PriorityNumber;
+                        }
+
+                        if (SequencePositionZ[s] == 0 && SequencePositionY[s] == 0 && SequencePositionX[s] == -1)
+                        {
+                            VisualExit = PriorityNumber;
+                        }
+
+                        std::printf("\033c");
+                        // Draw Level View
+                        std::cout << std::endl;
+                        std::cout << "    Level View" << std::endl;
+                        std::cout << std::endl;
+                        for (int j = Row - 1; j >= 0; --j)
+                        {
+                            std::cout << " ";
+
+                            for (int k = 0; k < Height; k++)
+                            {
+                                if (j == Row - 1)
+                                {
+                                    std::cout << "L" << k << " ";
+                                }
+                                else
+                                {
+                                    std::cout << "   ";
+                                }
+
+                                for (int i = 0; i < Column; i++)
+                                {
+                                    // Determine spacing for the current Number
+                                    Counter2 = LevelViewTensor[k][j][i];
+                                    for (int u = 0; Counter2 > 0; u++)
+                                    {
+                                        Counter2 = Counter2 / 10;
+                                        Digit++;
+                                    }
+
+                                    if (SequencePositionZ[s] == k && SequencePositionY[s] == j && SequencePositionX[s] == i)
+                                    {
+                                        if (a % 2)
+                                        {
+                                            std::cout << "[" << LevelViewTensor[k][j][i] << "]";
+                                        }
+                                        else
+                                        {
+                                            std::cout << " " << LevelViewTensor[k][j][i] << " ";
+                                        }
+
+                                    }
+                                    else
+                                    {
+                                        std::cout << "[" << LevelViewTensor[k][j][i] << "]";
+                                    }
+
+                                    if (LevelViewTensor[k][j][i] == 0)
+                                    {
+                                        Digit = 1;
+                                    }
+
+                                    for (int e = 0; e < MaximumDigit - Digit + 1; e++)
+                                    {
+                                        std::cout << " ";
+                                    }
+
+                                    Counter2 = 0;
+                                    Digit = 0;
+                                }
+
+                                if (k + 1 != Height)
+                                {
+                                    std::cout << "> ";
+                                }
+
+                            }
+                            std::cout << std::endl;
+                        }
+
+                        // Draw Plan View
+                        std::cout << std::endl;
+                        std::cout << "    Plan View" << std::endl;
+                        std::cout << std::endl;
+                        for (int j = Row - 1; j >= 0; --j)
+                        {
+                            std::cout << "    ";
+                            if (j == Row - 1 || j == 0)
+                            {
+                                if (j == Row - 1)
+                                {
+                                    if (SequencePositionZ[s] == 0 && SequencePositionY[s] == 0 && SequencePositionX[s] == -1)
+                                    {
+                                        if (a % 2)
+                                        {
+                                            std::cout << "[" << VisualExit << "]";
+                                        }
+                                        else
+                                        {
+                                            std::cout << " " << VisualExit << " ";
+                                        }
+
+                                    }
+                                    else
+                                    {
+                                        std::cout << "[" << VisualExit << "]";
+                                    }
+
+                                    Counter2 = VisualExit;
+
+                                    for (int u = 0; Counter2 > 0; u++)
+                                    {
+                                        Counter2 = Counter2 / 10;
+                                        Digit++;
+                                    }
+
+                                    if (VisualExit == 0)
+                                    {
+                                        Digit = 1;
+                                    }
+
+                                    for (int e = 0; e < (MaximumDigit - Digit + 1); e++)
+                                    {
+                                        std::cout << " ";
+                                    }
+
+                                    Counter2 = 0;
+                                    Digit = 0;
+
+                                }
+                                else
+                                {
+                                    if (SequencePositionZ[s] == 0 && SequencePositionY[s] == -1 && SequencePositionX[s] == 0)
+                                    {
+                                        if (a % 2)
+                                        {
+                                            std::cout << "[" << VisualEntry << "]";
+                                        }
+                                        else
+                                        {
+                                            std::cout << " " << VisualEntry << " ";
+                                        }
+                                    }
+                                    else
+                                    {
+                                        std::cout << "[" << VisualEntry << "]";
+                                    }
+
+                                    Counter2 = VisualEntry;
+
+                                    for (int u = 0; Counter2 > 0; u++)
+                                    {
+                                        Counter2 = Counter2 / 10;
+                                        Digit++;
+                                    }
+
+                                    if (VisualEntry == 0)
+                                    {
+                                        Digit = 1;
+                                    }
+
+                                    for (int e = 0; e < (MaximumDigit - Digit + 1); e++)
+                                    {
+                                        std::cout << " ";
+                                    }
+
+                                    Counter2 = 0;
+                                    Digit = 0;
+                                }
+                            }
+                            else
+                            {
+                                std::cout << "   ";
+
+                                for (int e = 0; e < (MaximumDigit); e++)
+                                {
+                                    std::cout << " ";
+                                }
+                            }
+
+                            for (int i = 0; i < Column; i++)
+                            {
+                                if (SequencePositionY[s] == j && SequencePositionX[s] == i)
+                                {
+                                    if (a % 2)
+                                    {
+                                        std::cout << "[" << PlanViewMatrix[j][i] << "]";
+                                    }
+                                    else
+                                    {
+                                        std::cout << " " << PlanViewMatrix[j][i] << " ";
+                                    }
+
+                                }
+                                else
+                                {
+                                    std::cout << "[" << PlanViewMatrix[j][i] << "]";
+                                }
+
+                                Counter2 = PlanViewMatrix[j][i];
+
+                                for (int u = 0; Counter2 > 0; u++)
+                                {
+                                    Counter2 = Counter2 / 10;
+                                    Digit++;
+                                }
+
+                                if (PlanViewMatrix[j][i] == 0)
+                                {
+                                    Digit = 1;
+                                }
+
+                                for (int e = 0; e < (MaximumDigit - Digit + 1); e++)
+                                {
+                                    std::cout << " ";
+                                }
+
+                                Counter2 = 0;
+                                Digit = 0;
+
+                            }
+                            std::cout << std::endl;
+                        }
+                        std::cout << std::endl;
+
+                        Sleep(250);
+                    }
+
+
+
+
+
+                    // Taking
+                    if (SequencePositionZ[s] == 0 && SequencePositionY[s] == -1 && SequencePositionX[s] == 0)
+                    {
+                        CopyVisual = VisualEntry;
+                        CopyDepth = VisualEntry;
+                        VisualEntry = 0;
+                    }
+
+                    if (SequencePositionZ[s] == 0 && SequencePositionY[s] == 0 && SequencePositionX[s] == -1)
+                    {
+                        CopyVisual = VisualExit;
+                        CopyDepth = VisualExit;
+                        VisualExit = 0;
+                    }
+
+                    if (0 <= SequencePositionZ[s] && SequencePositionZ[s] < Height && 0 <= SequencePositionY[s] && SequencePositionY[s] < Row && 0 <= SequencePositionX[s] && SequencePositionX[s] < Column)
+                    {
+                        if (SequencePositionZ[s] == 0)
+                        {
+                            CopyDepth = LevelViewTensor[SequencePositionZ[s]][SequencePositionY[s]][SequencePositionX[s]];
+                            PlanViewMatrix[SequencePositionY[s]][SequencePositionX[s]] = 0;
+                        }
+                        else
+                        {
+                            CopyDepth = LevelViewTensor[SequencePositionZ[s]][SequencePositionY[s]][SequencePositionX[s]];
+                            PlanViewMatrix[SequencePositionY[s]][SequencePositionX[s]] = LevelViewTensor[SequencePositionZ[s] - 1][SequencePositionY[s]][SequencePositionX[s]];
+                        }
+
+                        CopyVisual = LevelViewTensor[SequencePositionZ[s]][SequencePositionY[s]][SequencePositionX[s]];
+                        LevelViewTensor[SequencePositionZ[s]][SequencePositionY[s]][SequencePositionX[s]] = 0;
+
+                    }
+
+                    // Taking Animation
+                    std::printf("\033c");
+                    // Draw Level View
+                    std::cout << std::endl;
+                    std::cout << "    Level View" << std::endl;
+                    std::cout << std::endl;
+                    for (int j = Row - 1; j >= 0; --j)
+                    {
+                        std::cout << " ";
+
+                        for (int k = 0; k < Height; k++)
+                        {
+                            if (j == Row - 1)
+                            {
+                                std::cout << "L" << k << " ";
+                            }
+                            else
+                            {
+                                std::cout << "   ";
+                            }
+
+                            for (int i = 0; i < Column; i++)
+                            {
+                                // Determine spacing for the current Number
+                                Counter2 = LevelViewTensor[k][j][i];
+                                for (int u = 0; Counter2 > 0; u++)
+                                {
+                                    Counter2 = Counter2 / 10;
+                                    Digit++;
+                                }
+
+                                std::cout << "[" << LevelViewTensor[k][j][i] << "]";
+                                if (LevelViewTensor[k][j][i] == 0)
+                                {
+                                    Digit = 1;
+                                }
+
+                                for (int e = 0; e < MaximumDigit - Digit + 1; e++)
+                                {
+                                    std::cout << " ";
+                                }
+
+                                Counter2 = 0;
+                                Digit = 0;
+                            }
+
+                            if (k + 1 != Height)
+                            {
+                                std::cout << "> ";
+                            }
+
+                        }
+                        std::cout << std::endl;
+                    }
+
+
+                    // Draw Plan View
+                    std::cout << std::endl;
+                    std::cout << "    Plan View" << std::endl;
+                    std::cout << std::endl;
+                    for (int j = Row - 1; j >= 0; --j)
+                    {
+                        std::cout << "    ";
+                        if (j == Row - 1 || j == 0)
+                        {
+                            if (j == Row - 1)
+                            {
+                                std::cout << "[" << VisualExit << "]";
+
+                                Counter2 = VisualExit;
+
+                                for (int u = 0; Counter2 > 0; u++)
+                                {
+                                    Counter2 = Counter2 / 10;
+                                    Digit++;
+                                }
+
+                                if (VisualExit == 0)
+                                {
+                                    Digit = 1;
+                                }
+
+                                for (int e = 0; e < (MaximumDigit - Digit + 1); e++)
+                                {
+                                    std::cout << " ";
+                                }
+
+                                Counter2 = 0;
+                                Digit = 0;
+                            }
+                            else
+                            {
+                                std::cout << "[" << VisualEntry << "]";
+
+                                Counter2 = VisualEntry;
+
+                                for (int u = 0; Counter2 > 0; u++)
+                                {
+                                    Counter2 = Counter2 / 10;
+                                    Digit++;
+                                }
+
+                                if (VisualEntry == 0)
+                                {
+                                    Digit = 1;
+                                }
+
+                                for (int e = 0; e < (MaximumDigit - Digit + 1); e++)
+                                {
+                                    std::cout << " ";
+                                }
+
+                                Counter2 = 0;
+                                Digit = 0;
+
+                            }
+                        }
+                        else
+                        {
+                            std::cout << "   ";
+
+                            for (int e = 0; e < (MaximumDigit); e++)
+                            {
+                                std::cout << " ";
+                            }
+                        }
+
+                        for (int i = 0; i < Column; i++)
+                        {
+                            std::cout << "[" << PlanViewMatrix[j][i] << "]";
+
+                            Counter2 = PlanViewMatrix[j][i];
+
+                            for (int u = 0; Counter2 > 0; u++)
+                            {
+                                Counter2 = Counter2 / 10;
+                                Digit++;
+                            }
+
+                            if (PlanViewMatrix[j][i] == 0)
+                            {
+                                Digit = 1;
+                            }
+
+                            for (int e = 0; e < (MaximumDigit - Digit + 1); e++)
+                            {
+                                std::cout << " ";
+                            }
+
+                            Counter2 = 0;
+                            Digit = 0;
+
+                        }
+                        std::cout << std::endl;
+                    }
+                    Sleep(1000);
+
+                    // Initial Animation Destination
+                    for (int a = 1; a <= 5; a++)
+                    {
+                        std::printf("\033c");
+                        // Draw Level View
+                        std::cout << std::endl;
+                        std::cout << "    Level View" << std::endl;
+                        std::cout << std::endl;
+                        for (int j = Row - 1; j >= 0; --j)
+                        {
+                            std::cout << " ";
+
+                            for (int k = 0; k < Height; k++)
+                            {
+                                if (j == Row - 1)
+                                {
+                                    std::cout << "L" << k << " ";
+                                }
+                                else
+                                {
+                                    std::cout << "   ";
+                                }
+
+                                for (int i = 0; i < Column; i++)
+                                {
+                                    // Determine spacing for the current Number
+                                    Counter2 = LevelViewTensor[k][j][i];
+                                    for (int u = 0; Counter2 > 0; u++)
+                                    {
+                                        Counter2 = Counter2 / 10;
+                                        Digit++;
+                                    }
+
+                                    if (SequenceDestinationZ[s] == k && SequenceDestinationY[s] == j && SequenceDestinationX[s] == i)
+                                    {
+                                        if (a % 2)
+                                        {
+                                            std::cout << "[" << LevelViewTensor[k][j][i] << "]";
+                                        }
+                                        else
+                                        {
+                                            std::cout << " " << LevelViewTensor[k][j][i] << " ";
+                                        }
+
+                                    }
+                                    else
+                                    {
+                                        std::cout << "[" << LevelViewTensor[k][j][i] << "]";
+                                    }
+
+                                    if (LevelViewTensor[k][j][i] == 0)
+                                    {
+                                        Digit = 1;
+                                    }
+
+                                    for (int e = 0; e < MaximumDigit - Digit + 1; e++)
+                                    {
+                                        std::cout << " ";
+                                    }
+
+                                    Counter2 = 0;
+                                    Digit = 0;
+                                }
+
+                                if (k + 1 != Height)
+                                {
+                                    std::cout << "> ";
+                                }
+
+                            }
+                            std::cout << std::endl;
+                        }
+
+                        // Draw Plan View
+                        std::cout << std::endl;
+                        std::cout << "    Plan View" << std::endl;
+                        std::cout << std::endl;
+                        for (int j = Row - 1; j >= 0; --j)
+                        {
+                            std::cout << "    ";
+                            if (j == Row - 1 || j == 0)
+                            {
+                                if (j == Row - 1)
+                                {
+                                    if (SequenceDestinationZ[s] == 0 && SequenceDestinationY[s] == 0 && SequenceDestinationX[s] == -1)
+                                    {
+                                        if (a % 2)
+                                        {
+                                            std::cout << "[" << VisualExit << "]";
+                                        }
+                                        else
+                                        {
+                                            std::cout << " " << VisualExit << " ";
+                                        }
+
+                                    }
+                                    else
+                                    {
+                                        std::cout << "[" << VisualExit << "]";
+                                    }
+
+                                    Counter2 = VisualExit;
+
+                                    for (int u = 0; Counter2 > 0; u++)
+                                    {
+                                        Counter2 = Counter2 / 10;
+                                        Digit++;
+                                    }
+
+                                    if (VisualExit == 0)
+                                    {
+                                        Digit = 1;
+                                    }
+
+                                    for (int e = 0; e < (MaximumDigit - Digit + 1); e++)
+                                    {
+                                        std::cout << " ";
+                                    }
+
+                                    Counter2 = 0;
+                                    Digit = 0;
+
+                                }
+                                else
+                                {
+                                    if (SequenceDestinationZ[s] == 0 && SequenceDestinationY[s] == -1 && SequenceDestinationX[s] == 0)
+                                    {
+                                        if (a % 2)
+                                        {
+                                            std::cout << "[" << VisualEntry << "]";
+                                        }
+                                        else
+                                        {
+                                            std::cout << " " << VisualEntry << " ";
+                                        }
+                                    }
+                                    else
+                                    {
+                                        std::cout << "[" << VisualEntry << "]";
+                                    }
+
+                                    Counter2 = VisualEntry;
+
+                                    for (int u = 0; Counter2 > 0; u++)
+                                    {
+                                        Counter2 = Counter2 / 10;
+                                        Digit++;
+                                    }
+
+                                    if (VisualEntry == 0)
+                                    {
+                                        Digit = 1;
+                                    }
+
+                                    for (int e = 0; e < (MaximumDigit - Digit + 1); e++)
+                                    {
+                                        std::cout << " ";
+                                    }
+
+                                    Counter2 = 0;
+                                    Digit = 0;
+                                }
+                            }
+                            else
+                            {
+                                std::cout << "   ";
+
+                                for (int e = 0; e < (MaximumDigit); e++)
+                                {
+                                    std::cout << " ";
+                                }
+                            }
+
+                            for (int i = 0; i < Column; i++)
+                            {
+                                if (SequenceDestinationY[s] == j && SequenceDestinationX[s] == i)
+                                {
+                                    if (a % 2)
+                                    {
+                                        std::cout << "[" << PlanViewMatrix[j][i] << "]";
+                                    }
+                                    else
+                                    {
+                                        std::cout << " " << PlanViewMatrix[j][i] << " ";
+                                    }
+
+                                }
+                                else
+                                {
+                                    std::cout << "[" << PlanViewMatrix[j][i] << "]";
+                                }
+
+                                Counter2 = PlanViewMatrix[j][i];
+
+                                for (int u = 0; Counter2 > 0; u++)
+                                {
+                                    Counter2 = Counter2 / 10;
+                                    Digit++;
+                                }
+
+                                if (PlanViewMatrix[j][i] == 0)
+                                {
+                                    Digit = 1;
+                                }
+
+                                for (int e = 0; e < (MaximumDigit - Digit + 1); e++)
+                                {
+                                    std::cout << " ";
+                                }
+
+                                Counter2 = 0;
+                                Digit = 0;
+
+                            }
+                            std::cout << std::endl;
+                        }
+
+                        //
+                        std::cout << std::endl;
+
+                        Sleep(250);
+                    }
+
+
+                    // Putting
+                    if (0 <= SequenceDestinationZ[s] && SequenceDestinationZ[s] < Height && 0 <= SequenceDestinationY[s] && SequenceDestinationY[s] < Row && 0 <= SequenceDestinationX[s] && SequenceDestinationX[s] < Column)
+                    {
+                        PlanViewMatrix[SequenceDestinationY[s]][SequenceDestinationX[s]] = CopyDepth;
+                        LevelViewTensor[SequenceDestinationZ[s]][SequenceDestinationY[s]][SequenceDestinationX[s]] = CopyVisual;
+                    }
+
+                    if (SequenceDestinationZ[s] == 0 && SequenceDestinationY[s] == 0 && SequenceDestinationX[s] == -1)
+                    {
+                        VisualExit = CopyVisual;
+                    }
+
+                    if (SequenceDestinationZ[s] == 0 && SequenceDestinationY[s] == -1 && SequenceDestinationX[s] == 0)
+                    {
+                        VisualEntry = CopyVisual;
+                    }
+
+
+                    // Putting Animation
+                    std::printf("\033c");
+                    // Draw Level View
+                    std::cout << std::endl;
+                    std::cout << "    Level View" << std::endl;
+                    std::cout << std::endl;
+                    for (int j = Row - 1; j >= 0; --j)
+                    {
+                        std::cout << " ";
+
+                        for (int k = 0; k < Height; k++)
+                        {
+                            if (j == Row - 1)
+                            {
+                                std::cout << "L" << k << " ";
+                            }
+                            else
+                            {
+                                std::cout << "   ";
+                            }
+
+                            for (int i = 0; i < Column; i++)
+                            {
+                                // Determine spacing for the current Number
+                                Counter2 = LevelViewTensor[k][j][i];
+                                for (int u = 0; Counter2 > 0; u++)
+                                {
+                                    Counter2 = Counter2 / 10;
+                                    Digit++;
+                                }
+
+                                std::cout << "[" << LevelViewTensor[k][j][i] << "]";
+                                if (LevelViewTensor[k][j][i] == 0)
+                                {
+                                    Digit = 1;
+                                }
+
+                                for (int e = 0; e < MaximumDigit - Digit + 1; e++)
+                                {
+                                    std::cout << " ";
+                                }
+
+                                Counter2 = 0;
+                                Digit = 0;
+                            }
+
+                            if (k + 1 != Height)
+                            {
+                                std::cout << "> ";
+                            }
+
+                        }
+                        std::cout << std::endl;
+                    }
+
+
+                    // Draw Plan View
+                    std::cout << std::endl;
+                    std::cout << "    Plan View" << std::endl;
+                    std::cout << std::endl;
+                    for (int j = Row - 1; j >= 0; --j)
+                    {
+                        std::cout << "    ";
+                        if (j == Row - 1 || j == 0)
+                        {
+                            if (j == Row - 1)
+                            {
+                                std::cout << "[" << VisualExit << "]";
+
+                                Counter2 = VisualExit;
+
+                                for (int u = 0; Counter2 > 0; u++)
+                                {
+                                    Counter2 = Counter2 / 10;
+                                    Digit++;
+                                }
+
+                                if (VisualExit == 0)
+                                {
+                                    Digit = 1;
+                                }
+
+                                for (int e = 0; e < (MaximumDigit - Digit + 1); e++)
+                                {
+                                    std::cout << " ";
+                                }
+
+                                Counter2 = 0;
+                                Digit = 0;
+                            }
+                            else
+                            {
+                                std::cout << "[" << VisualEntry << "]";
+
+                                Counter2 = VisualEntry;
+
+                                for (int u = 0; Counter2 > 0; u++)
+                                {
+                                    Counter2 = Counter2 / 10;
+                                    Digit++;
+                                }
+
+                                if (VisualEntry == 0)
+                                {
+                                    Digit = 1;
+                                }
+
+                                for (int e = 0; e < (MaximumDigit - Digit + 1); e++)
+                                {
+                                    std::cout << " ";
+                                }
+
+                                Counter2 = 0;
+                                Digit = 0;
+
+                            }
+                        }
+                        else
+                        {
+                            std::cout << "   ";
+
+                            for (int e = 0; e < (MaximumDigit); e++)
+                            {
+                                std::cout << " ";
+                            }
+                        }
+
+                        for (int i = 0; i < Column; i++)
+                        {
+                            std::cout << "[" << PlanViewMatrix[j][i] << "]";
+
+                            Counter2 = PlanViewMatrix[j][i];
+
+                            for (int u = 0; Counter2 > 0; u++)
+                            {
+                                Counter2 = Counter2 / 10;
+                                Digit++;
+                            }
+
+                            if (PlanViewMatrix[j][i] == 0)
+                            {
+                                Digit = 1;
+                            }
+
+                            for (int e = 0; e < (MaximumDigit - Digit + 1); e++)
+                            {
+                                std::cout << " ";
+                            }
+
+                            Counter2 = 0;
+                            Digit = 0;
+
+                        }
+                        std::cout << std::endl;
+                    }
+                    Sleep(1000);
+                }
+            }
+        }
+
+        std::printf("\033c");
+        // Draw Level View
+        std::cout << std::endl;
+        std::cout << "    Level View" << std::endl;
+        std::cout << std::endl;
+        for (int j = Row - 1; j >= 0; --j)
+        {
+            std::cout << " ";
+
+            for (int k = 0; k < Height; k++)
+            {
+                if (j == Row - 1)
+                {
+                    std::cout << "L" << k << " ";
+                }
+                else
+                {
+                    std::cout << "   ";
+                }
+
+                for (int i = 0; i < Column; i++)
+                {
+                    // Determine spacing for the current Number
+                    Counter2 = LevelViewTensor[k][j][i];
+                    for (int u = 0; Counter2 > 0; u++)
+                    {
+                        Counter2 = Counter2 / 10;
+                        Digit++;
+                    }
+
+                    std::cout << "[" << LevelViewTensor[k][j][i] << "]";
+                    if (LevelViewTensor[k][j][i] == 0)
+                    {
+                        Digit = 1;
+                    }
+
+                    for (int e = 0; e < MaximumDigit - Digit + 1; e++)
+                    {
+                        std::cout << " ";
+                    }
+
+                    Counter2 = 0;
+                    Digit = 0;
+                }
+
+                if (k + 1 != Height)
+                {
+                    std::cout << "> ";
+                }
+
+            }
+            std::cout << std::endl;
+        }
+
+
+        // Draw Plan View
+        std::cout << std::endl;
+        std::cout << "    Plan View" << std::endl;
+        std::cout << std::endl;
+        for (int j = Row - 1; j >= 0; --j)
+        {
+            std::cout << "    ";
+            if (j == Row - 1 || j == 0)
+            {
+                if (j == Row - 1)
+                {
+                    std::cout << "[" << VisualExit << "]";
+
+                    Counter2 = VisualExit;
+
+                    for (int u = 0; Counter2 > 0; u++)
+                    {
+                        Counter2 = Counter2 / 10;
+                        Digit++;
+                    }
+
+                    if (VisualExit == 0)
+                    {
+                        Digit = 1;
+                    }
+
+                    for (int e = 0; e < (MaximumDigit - Digit + 1); e++)
+                    {
+                        std::cout << " ";
+                    }
+
+                    Counter2 = 0;
+                    Digit = 0;
+                }
+                else
+                {
+                    std::cout << "[" << VisualEntry << "]";
+
+                    Counter2 = VisualEntry;
+
+                    for (int u = 0; Counter2 > 0; u++)
+                    {
+                        Counter2 = Counter2 / 10;
+                        Digit++;
+                    }
+
+                    if (VisualEntry == 0)
+                    {
+                        Digit = 1;
+                    }
+
+                    for (int e = 0; e < (MaximumDigit - Digit + 1); e++)
+                    {
+                        std::cout << " ";
+                    }
+
+                    Counter2 = 0;
+                    Digit = 0;
+
+                }
+            }
+            else
+            {
+                std::cout << "   ";
+
+                for (int e = 0; e < (MaximumDigit); e++)
+                {
+                    std::cout << " ";
+                }
+            }
+
+            for (int i = 0; i < Column; i++)
+            {
+                std::cout << "[" << PlanViewMatrix[j][i] << "]";
+
+                Counter2 = PlanViewMatrix[j][i];
+
+                for (int u = 0; Counter2 > 0; u++)
+                {
+                    Counter2 = Counter2 / 10;
+                    Digit++;
+                }
+
+                if (PlanViewMatrix[j][i] == 0)
+                {
+                    Digit = 1;
+                }
+
+                for (int e = 0; e < (MaximumDigit - Digit + 1); e++)
+                {
+                    std::cout << " ";
+                }
+
+                Counter2 = 0;
+                Digit = 0;
+
+            }
+            std::cout << std::endl;
+        }
+
+
+        std::cout << std::endl;
+
+
+        // Initiallizing Variables
+        PriorityNumber = 0;
+
+        // Default Origin
+        PositionX = 0;
+        PositionY = -1;
+        PositionZ = 0;
+
+        // Default Destination
+        DestinationX = -1;
+        DestinationY = 0;
+        DestinationZ = 0;
+
+        Counter5 = 2;
+        Counter6 = 0;
+
+        StepsPosition = 0;
+        StepsDestination = 0;
+
+        // Block Serial Number Counter
+        BlockSerial = 0;
+
+        Command.clear();
+
+        std::vector<int> EmptyVector;
+        SequenceDestinationX.clear();
+        SequenceDestinationX.swap(EmptyVector);
+
+        SequenceDestinationY.clear();
+        SequenceDestinationY.swap(EmptyVector);
+
+        SequenceDestinationZ.clear();
+        SequenceDestinationZ.swap(EmptyVector);
+
+        SequencePositionX.clear();
+        SequencePositionX.swap(EmptyVector);
+
+        SequencePositionY.clear();
+        SequencePositionY.swap(EmptyVector);
+
+        SequencePositionZ.clear();
+        SequencePositionZ.swap(EmptyVector);
+
+        // List of Commands
+        std::cout << "    List of Commands" << std::endl;
+        std::cout << "    [n]: Assign Priority Number" << std::endl;
+        std::cout << "    [n]<n>: Change Priority Number" << std::endl;
+        std::cout << "    [n]<x,y,z>: Assign Destination" << std::endl;
+        std::cout << "    [n]<i>: View Information" << std::endl;
+        std::cout << "    [n]<En>: Exit/Entry Destination" << std::endl;
+        std::cout << "    [#En]: Empty Exit/Entry" << std::endl;
+        std::cout << "    [A]<1>: Automatic Mode On" << std::endl;
+        std::cout << "    [A]<0>: Automatic Mode Off" << std::endl;
+        std::cout << "    [S]<1>: Shuffle Mode On" << std::endl;
+        std::cout << "    [S]<0>: Shuffle Mode Off" << std::endl;
+        std::cout << "    [X]: Cancel" << std::endl;
+
+        // Ignore the previus enter
+        std::cin.clear();
+
+        // One Step a Head - Copying Step a Head
+        if (Counter11 == 1 || Counter12 == 1)
+        {
+            PositionX = PositionCopyX;
+            PositionY = PositionCopyY;
+            PositionZ = PositionCopyZ;
+
+            DestinationX = DestinationCopyX;
+            DestinationY = DestinationCopyY;
+            DestinationZ = DestinationCopyZ;
+
+            Counter11 = 2;
+            Counter12 = 2;
+        }
+
+        // Selecting Path Base in Shuffle Mode
+        while (ShuffleModeOn == 1)
+        {
+            ShuffleModeCoordinates = ShortestPath(PriorityDinamicTensor);
+
+                PositionX = ShuffleModeCoordinates[0];
+                PositionY = ShuffleModeCoordinates[1];
+                PositionZ = ShuffleModeCoordinates[2];
+
+                DestinationX = ShuffleModeCoordinates[3];
+                DestinationY = ShuffleModeCoordinates[4];
+                DestinationZ = ShuffleModeCoordinates[5];
+
+                // Correction 
+                if (DestinationX == PositionX && DestinationY == PositionY && DestinationZ != PositionZ)
+                {
+
+                    if (PositionZ < DestinationZ)
+                    {
+                        int CopyPosiotionZ;
+                        CopyPosiotionZ = PositionZ;
+                        PositionZ = DestinationZ;
+                        DestinationZ = CopyPosiotionZ;
+                    }
+
+                    //Algorithm of Determination of Destination
+                    // Destination Step a Head
+                    int TemporalStepaHeadDestinationX = 0;
+                    int TemporalStepaHeadDestinationY = -1;
+                    int TemporalStepaHeadDestinationZ = 0;
+
+                    int Reference0 = Row * Column * Height;
+                    for (int k = 0; k < Height; k++)
+                    {
+                        for (int j = 0; j < Row; j++)
+                        {
+                            for (int i = 0; i < Column; i++)
+                            {
+                                if (PriorityStaticTensor[k][j][i] < Reference0 && MemoryTensor[k][j][i] == 0 && PriorityStaticTensor[k][j][i] != Row * Column * Height)
+                                {
+                                    Reference0 = PriorityStaticTensor[k][j][i];
+                                    TemporalStepaHeadDestinationX = i;
+                                    TemporalStepaHeadDestinationY = j;
+                                    TemporalStepaHeadDestinationZ = k;
+                                }
+                            }
+                        }
+                    }
+
+                    if (DestinationX == PositionX && DestinationY == PositionY && DestinationZ + 1 != PositionZ)
+                    {
+                        // Recording Reverse 
+                        SequencePositionRecorderX.push_back(TemporalStepaHeadDestinationX);
+                        SequencePositionRecorderY.push_back(TemporalStepaHeadDestinationY);
+                        SequencePositionRecorderZ.push_back(TemporalStepaHeadDestinationZ);
+
+                        SequenceDestinationRecorderX.push_back(PositionX);
+                        SequenceDestinationRecorderY.push_back(PositionY);
+                        SequenceDestinationRecorderZ.push_back(PositionZ);
+
+                        //One Step a head
+                        PositionCopyX = TemporalStepaHeadDestinationX;
+                        PositionCopyY = TemporalStepaHeadDestinationY;
+                        PositionCopyZ = TemporalStepaHeadDestinationZ;
+
+                        DestinationCopyX = DestinationX;
+                        DestinationCopyY = DestinationY;
+                        DestinationCopyZ = DestinationZ;
+
+                        Counter12 = 1;
+
+                        DestinationX = TemporalStepaHeadDestinationX;
+                        DestinationY = TemporalStepaHeadDestinationY;
+                        DestinationZ = TemporalStepaHeadDestinationZ;
+                    }
+                    else
+                    {
+                        if (DestinationX == PositionX && DestinationY == PositionY && DestinationZ + 1 == PositionZ)
+                        {
+                            if (PositionZ > DestinationZ)
+                            {
+                                int CopyPosiotionZ;
+                                CopyPosiotionZ = PositionZ;
+                                PositionZ = DestinationZ;
+                                DestinationZ = CopyPosiotionZ;
+                            }
+
+                            DestinationX = TemporalStepaHeadDestinationX;
+                            DestinationY = TemporalStepaHeadDestinationY;
+                            DestinationZ = TemporalStepaHeadDestinationZ;
+
+                            Counter13 = 1;
+                        }
+                    }
+                }
+
+                if (PositionX == DestinationX && PositionY == DestinationY && PositionZ == DestinationZ)
+                {
+                    ShuffleModeOn = 0;
+
+                    PositionX = 0;
+                    PositionY = -1;
+                    PositionZ = 0;
+                }
+                else
+                {
+                    int TimeOut = 0;
+                    clock_t start = clock();
+                    std::cout << std::endl;
+                    std::cout << "    Shuffle Mode On " << std::endl;
+                    std::cout << "    Observation: Press any key to Pause"<<std::endl;
+
+                    //Check for keyboard hit
+                    while (!_kbhit())
+                    {
+                        if (((clock() - start) / CLOCKS_PER_SEC) >= 2)
+                        {
+                            TimeOut = 1;
+                            break;
+                        }
+                    }
+
+                    if (TimeOut == 0)
+                    {
+                        std::cin.ignore();
+                        std::cout << "    Observation: Insert [S]<0> to exit" << std::endl;
+                        std::cout << "    Command Shuffle Mode: ";
+                        std::getline(std::cin, ShuffleModeOff);
+
+                        if (ShuffleModeOff == "[S]<0>")
+                        {
+                            ShuffleModeOn = 0;
+
+                            PositionX = 0;
+                            PositionY = -1;
+                            PositionZ = 0;
+                            std::cout << "    Shuffle Mode Off " << std::endl;
+                        }
+                    }
+
+                }
+
+            break;
+        }
+
+
+        // Introducing Commands
+        while (Command.size() == 0 && Counter11 == 0 && Counter12 == 0 && ShuffleModeOn == 0)
+        {
+            std::cin.clear();
+            std::cout << std::endl;
+            std::cout << "    Insert Command: ";
+            std::getline(std::cin, Command);
+
+            if (Command.size() > 0)
+            {
+                if (Command[0] == '[')
+                {
+                    if (Command.find(']') != std::string::npos)
+                    {
+                        if (Command[Command.find(']')] == Command[Command.size() - 1])
+                        {
+                            int Check0 = 1;
+                            std::string Temp0 = Command.substr(1, Command.size() - 2);
+
+                            //Check if a letter was introduce
+                            try
+                            {
+                                std::string::size_type Temp2;
+                                int Temp1 = std::stoi(Temp0, &Temp2);
+
+                                //Check if it converted all the string
+                                if (Temp2 != Temp0.size())
+                                {
+                                    Check0 = 0;
+                                }
+                            }
+                            catch (const std::invalid_argument& Rp)
+                            {
+                                Check0 = 0;
+                            }
+
+                            if (Check0)
+                            {
+                                int Temp1 = std::stoi(Temp0);
+
+                                if (Temp1 > 0 && Temp1 <= (Row * Column * (Height - 1)))
+                                {
+                                    int Counter10 = 0;
+                                    PriorityNumber = Temp1;
+
+                                    //Algorithm of Determination of Destination
+                                    int Reference0 = Row * Column * Height;
+                                    int Full = 1;
+                                    for (int k = 0; k < Height; k++)
+                                    {
+                                        for (int j = 0; j < Row; j++)
+                                        {
+                                            for (int i = 0; i < Column; i++)
+                                            {
+                                                if (PriorityStaticTensor[k][j][i] < Reference0 && MemoryTensor[k][j][i] == 0 && PriorityStaticTensor[k][j][i] != Row * Column * Height)
+                                                {
+                                                    Reference0 = PriorityStaticTensor[k][j][i];
+                                                    DestinationX = i;
+                                                    DestinationY = j;
+                                                    DestinationZ = k;
+                                                    Full = 0;
+                                                }
+
+                                                if (PriorityDinamicTensor[k][j][i] == PriorityNumber)
+                                                {
+                                                    Counter10 = 1;
+                                                }
+                                            }
+                                        }
+                                    }
+
+                                    if (Full)
+                                    {
+                                        std::cout << "    Observation: Full capacity" << std::endl;
+                                        Command.clear();
+                                    }
+
+                                    if (Counter10)
+                                    {
+                                        std::cout << "    Observation: Is already in use" << std::endl;
+                                        Command.clear();
+                                    }
+                                }
+                                else
+                                {
+                                    std::cout << "    Observation: Is out of range " << std::endl;
+                                    Command.clear();
+                                }
+
+                                if (!Command.empty())
+                                {
+                                    // Name Generator
+                                    SerialNumber++;
+                                    SerialName = 'K' + std::to_string(SerialNumber);
+                                }
+                            }
+                            else
+                            {
+                                if (Temp0 == "X" || Temp0 == "#E1" || Temp0 == "#E2")
+                                {
+                                    if (Temp0 == "X")
+                                    {
+                                        StartButton = 0;
+                                    }
+                                    else
+                                    {
+                                        if (Temp0 == "#E1")
+                                        {
+
+                                            PriorityEntry = 0;
+                                            NameEntry = "N/A";
+                                            MemoryEntry = 0;
+                                            VisualEntry = 0;
+
+                                            PositionX = DestinationX;
+                                            PositionY = DestinationY;
+                                            PositionZ = DestinationZ;
+                                        }
+                                        else
+                                        {
+                                            if (Temp0 == "#E2")
+                                            {
+                                              
+                                                PriorityExit = 0;
+                                                NameExit = "N/A";
+                                                MemoryExit = 0;
+                                                VisualExit = 0;
+
+                                                PositionX = DestinationX;
+                                                PositionY = DestinationY;
+                                                PositionZ = DestinationZ;
+
+                                            }
+                                        }
+
+                                    }
+
+                                }
+                                else
+                                {
+                                    std::cout << "    Observation: Please introduce a valid command" << std::endl;
+                                    Command.clear();
+                                }
+                            }
+                        }
+                        else
+                        {
+                            // Retain the essencial part of the code
+                            std::string LetterCode;
+                            int NumericCode = 0;
+
+                            if (Command.find('>') != std::string::npos && Command.find('<') != std::string::npos)
+                            {
+                                if (Command[Command.find('>')] == Command[Command.size() - 1])
+                                {
+                                    if (Command.find(']') + 1 == Command.find('<'))
+                                    {
+                                        if (Command.find('<') + 1 != Command.size() - 1)
+                                        {
+                                            int Check0 = 1;
+                                            std::string Temp0 = Command.substr(1, (Command.find(']') - 1));
+
+                                            //Check if a letter was introduce
+                                            try
+                                            {
+                                                std::string::size_type Temp2;
+                                                int Temp1 = std::stoi(Temp0, &Temp2);
+
+                                                //Check if it converted all the string
+                                                if (Temp2 != Temp0.size())
+                                                {
+                                                    Check0 = 0;
+                                                }
+                                            }
+                                            catch (const std::invalid_argument& Rf)
+                                            {
+                                                Check0 = 0;
+                                            }
+
+                                            if (Check0)
+                                            {
+
+                                                int Temp1 = std::stoi(Temp0);
+
+                                                if (Temp1 > 0 && Temp1 <= (Row * Column * (Height - 1)))
+                                                {
+                                                    NumericCode = Temp1;
+                                                    int Counter10 = 0;
+                                                    PriorityNumber = Temp1;
+
+                                                    //Algorithm of Determination of Destination
+                                                    int Reference0 = Row * Column * Height;
+                                                    int Full = 1;
+                                                    for (int k = 0; k < Height; k++)
+                                                    {
+                                                        for (int j = 0; j < Row; j++)
+                                                        {
+                                                            for (int i = 0; i < Column; i++)
+                                                            {
+
+                                                                if (PriorityDinamicTensor[k][j][i] == PriorityNumber)
+                                                                {
+                                                                    PositionX = i;
+                                                                    PositionY = j;
+                                                                    PositionZ = k;
+                                                                    BlockSerial = 1;
+                                                                }
+                                                                else
+                                                                {
+                                                                    if (PriorityStaticTensor[k][j][i] < Reference0 && MemoryTensor[k][j][i] == 0 && PriorityStaticTensor[k][j][i] != Row * Column * Height)
+                                                                    {
+                                                                        Reference0 = PriorityStaticTensor[k][j][i];
+                                                                        DestinationX = i;
+                                                                        DestinationY = j;
+                                                                        DestinationZ = k;
+                                                                        Full = 0;
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+
+                                                    if (PriorityEntry == PriorityNumber)
+                                                    {
+                                                        PositionX = 0;
+                                                        PositionY = -1;
+                                                        PositionZ = 0;
+                                                        BlockSerial = 1;
+                                                    }
+
+                                                    if (PriorityExit == PriorityNumber)
+                                                    {
+                                                        PositionX = -1;
+                                                        PositionY = 0;
+                                                        PositionZ = 0;
+                                                        BlockSerial = 1;
+                                                    }
+
+                                                    if (Full)
+                                                    {
+                                                        std::cout << "    Observation: Full capacity" << std::endl;
+                                                        Command.clear();
+                                                    }
+
+                                                }
+                                                else
+                                                {
+                                                    std::cout << "    Observation: Is out of range " << std::endl;
+                                                    Command.clear();
+                                                }
+
+                                            }
+                                            else
+                                            {
+                                                if (Temp0 == "A" || Temp0 == "S")
+                                                {
+                                                    LetterCode = Temp0;
+                                                }
+                                                else
+                                                {
+                                                    std::cout << "    Observation: Please insert a valid command " << std::endl;
+                                                    Command.clear();
+                                                }
+                                            }
+
+                                            if (Command.find(',') == std::string::npos)
+                                            {
+                                                int Check1 = 1;
+                                                std::string Temp3 = Command.substr((Command.find('<') + 1), (Command.size() - Command.find('<') - 2));
+
+                                                //Check if a letter was introduce
+                                                try
+                                                {
+                                                    std::string::size_type Temp5;
+                                                    int Temp4 = std::stoi(Temp3, &Temp5);
+
+                                                    //Check if it converted all the string
+                                                    if (Temp5 != Temp3.size())
+                                                    {
+                                                        Check1 = 0;
+                                                    }
+                                                }
+                                                catch (const std::invalid_argument& Rg)
+                                                {
+                                                    Check1 = 0;
+                                                }
+
+                                                if (Check1)
+                                                {
+                                                    int Temp4 = std::stoi(Temp3);
+
+                                                    if (NumericCode > 0 && NumericCode <= (Row * Column * (Height - 1)))
+                                                    {
+                                                        if (Temp4 > 0 && Temp4 <= (Row * Column * (Height - 1)))
+                                                        {
+                                                            // Check Existing within range
+                                                            int SwapRecorderX0;
+                                                            int SwapRecorderY0;
+                                                            int SwapRecorderZ0;
+                                                            int CheckSwap0 = 0;
+
+                                                            int SwapRecorderX1;
+                                                            int SwapRecorderY1;
+                                                            int SwapRecorderZ1;
+                                                            int CheckSwap1 = 0;
+
+                                                            int SwapCopy;
+
+                                                            for (int k = 0; k < Height; k++)
+                                                            {
+                                                                for (int j = 0; j < Row; j++)
+                                                                {
+                                                                    for (int i = 0; i < Column; i++)
+                                                                    {
+                                                                        if (PriorityDinamicTensor[k][j][i] == Temp4)
+                                                                        {
+                                                                            SwapRecorderX0 = i;
+                                                                            SwapRecorderY0 = j;
+                                                                            SwapRecorderZ0 = k;
+                                                                            CheckSwap0 = 1;
+                                                                        }
+
+                                                                        if (PriorityDinamicTensor[k][j][i] == NumericCode)
+                                                                        {
+                                                                            SwapRecorderX1 = i;
+                                                                            SwapRecorderY1 = j;
+                                                                            SwapRecorderZ1 = k;
+                                                                            CheckSwap1 = 1;
+                                                                        }
+                                                                    }
+                                                                }
+                                                            }
+
+                                                            if ((CheckSwap0 == 1 || CheckSwap0 == 0) && CheckSwap1 == 1)
+                                                            {
+                                                                if (NumericCode != Temp4)
+                                                                {
+                                                                    if (CheckSwap0 == 1 && CheckSwap1 == 1)
+                                                                    {
+                                                                        PriorityDinamicTensor[SwapRecorderZ0][SwapRecorderY0][SwapRecorderX0] = NumericCode;
+                                                                        LevelViewTensor[SwapRecorderZ0][SwapRecorderY0][SwapRecorderX0] = NumericCode;
+
+                                                                        PriorityDinamicTensor[SwapRecorderZ1][SwapRecorderY1][SwapRecorderX1] = Temp4;
+                                                                        LevelViewTensor[SwapRecorderZ1][SwapRecorderY1][SwapRecorderX1] = Temp4;
+
+                                                                        if (Height - FreeVariationMatrix[SwapRecorderY0][SwapRecorderX0] == SwapRecorderZ0 + 1)
+                                                                        {
+                                                                            PlanViewMatrix[SwapRecorderY0][SwapRecorderX0] = NumericCode;
+                                                                        }
+
+                                                                        if (Height - FreeVariationMatrix[SwapRecorderY1][SwapRecorderX1] == SwapRecorderZ1 + 1)
+                                                                        {
+                                                                            PlanViewMatrix[SwapRecorderY1][SwapRecorderX1] = Temp4;
+                                                                        }
+
+                                                                        PositionX = DestinationX;
+                                                                        PositionY = DestinationY;
+                                                                        PositionZ = DestinationZ;
+
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        if (CheckSwap1 == 1)
+                                                                        {
+                                                                            PriorityDinamicTensor[SwapRecorderZ1][SwapRecorderY1][SwapRecorderX1] = Temp4;
+                                                                            LevelViewTensor[SwapRecorderZ1][SwapRecorderY1][SwapRecorderX1] = Temp4;
+
+                                                                            if (Height - FreeVariationMatrix[SwapRecorderY1][SwapRecorderX1] == SwapRecorderZ1 + 1)
+                                                                            {
+                                                                                PlanViewMatrix[SwapRecorderY1][SwapRecorderX1] = Temp4;
+                                                                            }
+
+                                                                            PositionX = DestinationX;
+                                                                            PositionY = DestinationY;
+                                                                            PositionZ = DestinationZ;
+
+                                                                        }
+                                                                    }
+                                                                }
+                                                                else
+                                                                {
+                                                                    std::cout << "    Observation: Already in place " << std::endl;
+                                                                    Command.clear();
+                                                                }
+                                                            }
+                                                            else
+                                                            {
+                                                                std::cout << "    Observation: Not found " << std::endl;
+                                                                Command.clear();
+                                                            }
+
+                                                        }
+                                                        else
+                                                        {
+                                                            std::cout << "    Observation: Is out of range " << std::endl;
+                                                            Command.clear();
+                                                        }
+                                                    }
+                                                    else
+                                                    {
+                                                        if (LetterCode == "A" || LetterCode == "S")
+                                                        {
+                                                            if (LetterCode == "A" && Temp4 == 1)
+                                                            {
+                                                                std::cout << "    Automatic Mode On " << std::endl;
+                                                                std::cout << "    Observation: Not ready " << std::endl;
+                                                                Command.clear();
+                                                            }
+                                                            else
+                                                            {
+                                                                if (LetterCode == "A" && Temp4 == 0)
+                                                                {
+                                                                    std::cout << "    Automatic Mode Off " << std::endl;
+                                                                    std::cout << "    Observation: Not ready " << std::endl;
+                                                                    Command.clear();
+                                                                }
+                                                                else
+                                                                {
+                                                                    if (LetterCode == "S" && Temp4 == 1)
+                                                                    {
+                                                                        std::cout << "    Shuffle Mode On " << std::endl;
+
+                                                                        ShuffleModeCoordinates = ShortestPath(PriorityDinamicTensor);
+                                                                        BlockSerial = 1;
+
+                                                                        PositionX = ShuffleModeCoordinates[0];
+                                                                        PositionY = ShuffleModeCoordinates[1];
+                                                                        PositionZ = ShuffleModeCoordinates[2];
+
+                                                                        DestinationX = ShuffleModeCoordinates[3];
+                                                                        DestinationY = ShuffleModeCoordinates[4];
+                                                                        DestinationZ = ShuffleModeCoordinates[5];
+
+                                                                        // Correction
+                                                                        if (DestinationX == PositionX && DestinationY == PositionY && DestinationZ != PositionZ)
+                                                                        {
+                                                                           
+                                                                            if (PositionZ < DestinationZ)
+                                                                            {
+                                                                                int CopyPosiotionZ;
+                                                                                CopyPosiotionZ = PositionZ;
+                                                                                PositionZ = DestinationZ;
+                                                                                DestinationZ = CopyPosiotionZ;
+                                                                            }
+
+                                                                            //Algorithm of Determination of Destination
+                                                                            // Destination Step a Head
+                                                                            int TemporalStepaHeadDestinationX = 0;
+                                                                            int TemporalStepaHeadDestinationY = -1;
+                                                                            int TemporalStepaHeadDestinationZ = 0;
+
+                                                                            int Reference0 = Row * Column * Height;
+                                                                            for (int k = 0; k < Height; k++)
+                                                                            {
+                                                                                for (int j = 0; j < Row; j++)
+                                                                                {
+                                                                                    for (int i = 0; i < Column; i++)
+                                                                                    {
+                                                                                        if (PriorityStaticTensor[k][j][i] < Reference0 && MemoryTensor[k][j][i] == 0 && PriorityStaticTensor[k][j][i] != Row * Column * Height)
+                                                                                        {
+                                                                                            Reference0 = PriorityStaticTensor[k][j][i];
+                                                                                            TemporalStepaHeadDestinationX = i;
+                                                                                            TemporalStepaHeadDestinationY = j;
+                                                                                            TemporalStepaHeadDestinationZ = k;
+                                                                                        }
+                                                                                    }
+                                                                                }
+                                                                            }
+
+                                                                            if (DestinationX == PositionX && DestinationY == PositionY && DestinationZ + 1 != PositionZ)
+                                                                            {
+                                                                                // Recording Reverse 
+                                                                                SequencePositionRecorderX.push_back(TemporalStepaHeadDestinationX);
+                                                                                SequencePositionRecorderY.push_back(TemporalStepaHeadDestinationY);
+                                                                                SequencePositionRecorderZ.push_back(TemporalStepaHeadDestinationZ);
+
+                                                                                SequenceDestinationRecorderX.push_back(PositionX);
+                                                                                SequenceDestinationRecorderY.push_back(PositionY);
+                                                                                SequenceDestinationRecorderZ.push_back(PositionZ);
+
+                                                                                //One Step a head
+                                                                                PositionCopyX = TemporalStepaHeadDestinationX;
+                                                                                PositionCopyY = TemporalStepaHeadDestinationY;
+                                                                                PositionCopyZ = TemporalStepaHeadDestinationZ;
+
+                                                                                DestinationCopyX = DestinationX;
+                                                                                DestinationCopyY = DestinationY;
+                                                                                DestinationCopyZ = DestinationZ;
+
+                                                                                Counter12 = 1;
+
+                                                                                DestinationX = TemporalStepaHeadDestinationX;
+                                                                                DestinationY = TemporalStepaHeadDestinationY;
+                                                                                DestinationZ = TemporalStepaHeadDestinationZ;
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                if (DestinationX == PositionX && DestinationY == PositionY && DestinationZ + 1 == PositionZ)
+                                                                                {
+                                                                                    if (PositionZ > DestinationZ)
+                                                                                    {
+                                                                                        int CopyPosiotionZ;
+                                                                                        CopyPosiotionZ = PositionZ;
+                                                                                        PositionZ = DestinationZ;
+                                                                                        DestinationZ = CopyPosiotionZ;
+                                                                                    }
+
+                                                                                    DestinationX = TemporalStepaHeadDestinationX;
+                                                                                    DestinationY = TemporalStepaHeadDestinationY;
+                                                                                    DestinationZ = TemporalStepaHeadDestinationZ;
+
+                                                                                    Counter13 = 1;
+                                                                                }
+                                                                            }
+                                                                        }
+
+                                                                        if(PositionX == DestinationX && PositionY == DestinationY && PositionZ == DestinationZ)
+                                                                        { 
+                                                                            std::cout << "    Observation: Path not found " << std::endl;
+                                                                            Command.clear();
+                                                                            BlockSerial = 1;
+
+                                                                            PositionX = 0;
+                                                                            PositionY = -1;
+                                                                            PositionZ = 0;
+
+                                                                            DestinationX = -1;
+                                                                            DestinationY = 0;
+                                                                            DestinationZ = 0;
+
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            ShuffleModeOn = 1;
+                                                                        }
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        if (LetterCode == "S" && Temp4 == 0)
+                                                                        {
+                                                                            std::cout << "    Observation: Shuffle mode already off " << std::endl;
+                                                                            Command.clear();
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            std::cout << "    Observation: Please insert a valid command " << std::endl;
+                                                                            Command.clear();
+                                                                        }
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
+                                                        else
+                                                        {
+                                                            std::cout << "    Observation: Please insert a valid command " << std::endl;
+                                                            Command.clear();
+                                                        }
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    if (Temp3 == "i" || Temp3 == "E1" || Temp3 == "E2" && Check0 == 1)
+                                                    {
+                                                        if (Temp3 == "i")
+                                                        {
+                                                            int CheckInfo = 0;
+                                                            int InformationX;
+                                                            int InformationY;
+                                                            int InformationZ;
+
+                                                            // Check Existing within range
+                                                            for (int k = 0; k < Height; k++)
+                                                            {
+                                                                for (int j = 0; j < Row; j++)
+                                                                {
+                                                                    for (int i = 0; i < Column; i++)
+                                                                    {
+                                                                        if (PriorityDinamicTensor[k][j][i] == NumericCode)
+                                                                        {
+                                                                            InformationX = i;
+                                                                            InformationY = j;
+                                                                            InformationZ = k;
+                                                                            CheckInfo = 1;
+                                                                        }
+                                                                    }
+                                                                }
+                                                            }
+
+                                                            if (CheckInfo == 1)
+                                                            {
+                                                                std::cout << "    SerialName: " << NameTensor[InformationZ][InformationY][InformationX] << std::endl;
+                                                                Command.clear();
+
+                                                                PositionX = 0;
+                                                                PositionY = -1;
+                                                                PositionZ = 0;
+
+                                                                DestinationX = -1;
+                                                                DestinationY = 0;
+                                                                DestinationZ = 0;
+
+                                                            }
+                                                            else
+                                                            {
+                                                                std::cout << "    Observation: Not found " << std::endl;
+                                                                Command.clear();
+                                                            }
+
+                                                        }
+
+                                                        if (Temp3 == "E1")
+                                                        {
+                                                            if (PriorityEntry > 0)
+                                                            {
+                                                                std::cout << "    Observation: Entry/Exit is occupied" << std::endl;
+                                                                Command.clear();
+
+                                                                PositionX = DestinationX;
+                                                                PositionY = DestinationY;
+                                                                PositionZ = DestinationZ;
+
+                                                            }
+                                                            else
+                                                            {
+                                                                DestinationX = 0;
+                                                                DestinationY = -1;
+                                                                DestinationZ = 0;
+
+                                                            }
+                                                            
+                                                        }
+
+                                                        if (Temp3 == "E2")
+                                                        {
+                                                            if (PriorityExit > 0)
+                                                            {
+                                                                std::cout << "    Observation: Entry/Exit is occupied" << std::endl;
+                                                                Command.clear();
+
+                                                                PositionX = DestinationX;
+                                                                PositionY = DestinationY;
+                                                                PositionZ = DestinationZ;
+
+                                                            }
+                                                            else
+                                                            {
+                                                                DestinationX = -1;
+                                                                DestinationY = 0;
+                                                                DestinationZ = 0;
+
+                                                            }
+                                                        }
+
+                                                    }
+                                                    else
+                                                    {
+                                                            std::cout << "    Observation: Please insert a valid command " << std::endl;
+                                                            Command.clear();
+                                                    }
+                                                }
+                                            }
+                                            else
+                                            {
+                                                if (NumericCode > 0 && NumericCode <= (Row * Column * (Height - 1)))
+                                                {
+                                                    int Counter7 = 0;
+                                                    int Iterator1 = 0;
+                                                    int Iterator2 = 0;
+
+                                                    for (int v = 0; v < Command.size(); v++)
+                                                    {
+                                                        if (Command[v] == ',')
+                                                        {
+                                                            if (Counter7 == 0)
+                                                            {
+                                                                Counter7++;
+                                                                Iterator1 = v;
+                                                            }
+                                                            else
+                                                            {
+                                                                if (Counter7 == 1)
+                                                                {
+                                                                    Counter7++;
+                                                                    Iterator2 = v;
+                                                                }
+                                                                else
+                                                                {
+                                                                    Counter7++;
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+
+                                                    if (Counter7 == 2)
+                                                    {
+                                                        // Checkers Range 
+                                                        int CheckRangeX = 0;
+                                                        int CheckRangeY = 0;
+                                                        int CheckRangeZ = 0;
+
+                                                        // Copy of Coordinates
+                                                        int CopyTemp4;
+                                                        int CopyTemp7;
+                                                        int CopyTemp10;
+
+                                                        // Range of X
+                                                        int CheckX = 1;
+                                                        std::string Temp3 = Command.substr((Command.find('<') + 1), (Iterator1 - Command.find('<') - 1));
+                                                        try
+                                                        {
+                                                            std::string::size_type Temp5;
+                                                            int Temp4 = std::stoi(Temp3, &Temp5);
+
+                                                            //Check if it converted all the string
+                                                            if (Temp5 != Temp3.size())
+                                                            {
+                                                                CheckX = 0;
+                                                            }
+                                                        }
+                                                        catch (const std::invalid_argument& Rx)
+                                                        {
+                                                            CheckX = 0;
+                                                        }
+                                                        if (CheckX)
+                                                        {
+                                                            int Temp4 = std::stoi(Temp3);
+
+                                                            if (Temp4 >= 0 && Temp4 < Column)
+                                                            {
+                                                                CopyTemp4 = Temp4;
+                                                            }
+                                                            else
+                                                            {
+                                                                std::cout << "    Observation: Value x is out of range " << std::endl;
+                                                                CheckRangeX = 1;
+                                                            }
+                                                        }
+                                                        else
+                                                        {
+                                                            std::cout << "    Observation: Please insert a valid command " << std::endl;
+                                                        }
+
+                                                        // Range of Y
+                                                        int CheckY = 1;
+                                                        std::string Temp6 = Command.substr((Iterator1 + 1), (Iterator2 - Iterator1 - 1));
+                                                        try
+                                                        {
+                                                            std::string::size_type Temp8;
+                                                            int Temp4 = std::stoi(Temp6, &Temp8);
+
+                                                            //Check if it converted all the string
+                                                            if (Temp8 != Temp6.size())
+                                                            {
+                                                                CheckY = 0;
+                                                            }
+                                                        }
+                                                        catch (const std::invalid_argument& Ry)
+                                                        {
+                                                            CheckY = 0;
+                                                        }
+
+                                                        if (CheckY)
+                                                        {
+                                                            int Temp7 = std::stoi(Temp6);
+
+                                                            if (Temp7 >= 0 && Temp7 < Row)
+                                                            {
+                                                                CopyTemp7 = Temp7;
+                                                            }
+                                                            else
+                                                            {
+                                                                std::cout << "    Observation: Value y is out of range " << std::endl;
+                                                                CheckRangeY = 1;
+                                                            }
+                                                        }
+                                                        else
+                                                        {
+                                                            std::cout << "    Observation: Please insert a valid command " << std::endl;
+                                                        }
+
+                                                        // Range of Z
+                                                        int CheckZ = 1;
+                                                        std::string Temp9 = Command.substr((Iterator2 + 1), (Command.size() - Iterator2 - 2));
+                                                        try
+                                                        {
+                                                            std::string::size_type Temp11;
+                                                            int Temp4 = std::stoi(Temp9, &Temp11);
+
+                                                            //Check if it converted all the string
+                                                            if (Temp11 != Temp9.size())
+                                                            {
+                                                                CheckZ = 0;
+                                                            }
+                                                        }
+                                                        catch (const std::invalid_argument& Rz)
+                                                        {
+                                                            CheckZ = 0;
+                                                        }
+
+                                                        if (CheckZ)
+                                                        {
+                                                            int Temp10 = std::stoi(Temp9);
+
+                                                            if (Temp10 >= 0 && Temp10 < (Height - 1))
+                                                            {
+                                                                CopyTemp10 = Temp10;
+                                                            }
+                                                            else
+                                                            {
+                                                                std::cout << "    Observation: Value z is out of range " << std::endl;
+                                                                CheckRangeZ = 1;
+                                                            }
+
+                                                        }
+                                                        else
+                                                        {
+                                                            std::cout << "    Observation: Please insert a valid command " << std::endl;
+                                                        }
+
+                                                        if (CheckX == 0 || CheckY == 0 || CheckZ == 0)
+                                                        {
+                                                            Command.clear();
+                                                        }
+
+
+                                                        if (CheckRangeX == 1 || CheckRangeY == 1 || CheckRangeZ == 1)
+                                                        {
+                                                            Command.clear();
+                                                        }
+                                                        else
+                                                        {
+                                                            if (CheckX == 1 && CheckY == 1 && CheckZ == 1 && CheckRangeX == 0 && CheckRangeY == 0 && CheckRangeZ == 0)
+                                                            {
+                                                            
+                                                            if (MemoryTensor[CopyTemp10][CopyTemp7][CopyTemp4] == 1)
+                                                            {
+                                                                if (PositionX >= 0 && PositionX < Column && PositionY >= 0 && PositionY < Row && PositionZ >= 0 && PositionZ < Height)
+                                                                {
+                                                                    if (CopyTemp4 == PositionX && CopyTemp7 == PositionY && CopyTemp10 == PositionZ)
+                                                                    {
+                                                                        std::cout << "    Observation: Already in places " << std::endl;
+                                                                        Command.clear();
+                                                                    }
+
+                                                                    if (CopyTemp4 == PositionX && CopyTemp7 == PositionY && CopyTemp10 != PositionZ)
+                                                                    {
+
+                                                                        if (PositionZ < CopyTemp10)
+                                                                        {
+                                                                            int CopyPosiotionZ;
+                                                                            CopyPosiotionZ = PositionZ;
+                                                                            PositionZ = CopyTemp10;
+                                                                            CopyTemp10 = CopyPosiotionZ;
+                                                                        }
+
+                                                                        if (CopyTemp4 == PositionX && CopyTemp7 == PositionY && CopyTemp10 + 1 != PositionZ)
+                                                                        {
+                                                                            // Recording Reverse 
+                                                                            SequencePositionRecorderX.push_back(DestinationX);
+                                                                            SequencePositionRecorderY.push_back(DestinationY);
+                                                                            SequencePositionRecorderZ.push_back(DestinationZ);
+
+                                                                            SequenceDestinationRecorderX.push_back(PositionX);
+                                                                            SequenceDestinationRecorderY.push_back(PositionY);
+                                                                            SequenceDestinationRecorderZ.push_back(PositionZ);
+
+                                                                            //One Step a head
+                                                                            PositionCopyX = DestinationX;
+                                                                            PositionCopyY = DestinationY;
+                                                                            PositionCopyZ = DestinationZ;
+
+                                                                            DestinationCopyX = CopyTemp4;
+                                                                            DestinationCopyY = CopyTemp7;
+                                                                            DestinationCopyZ = CopyTemp10;
+
+                                                                            Counter12 = 1;
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            if (CopyTemp4 == PositionX && CopyTemp7 == PositionY && CopyTemp10 + 1 == PositionZ)
+                                                                            {
+                                                                                if (PositionZ > CopyTemp10)
+                                                                                {
+                                                                                    int CopyPosiotionZ;
+                                                                                    CopyPosiotionZ = PositionZ;
+                                                                                    PositionZ = CopyTemp10;
+                                                                                    CopyTemp10 = CopyPosiotionZ;
+                                                                                }
+
+                                                                                Counter13 = 1;
+                                                                            }
+                                                                        }
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        DestinationX = CopyTemp4;
+                                                                        DestinationY = CopyTemp7;
+                                                                        DestinationZ = CopyTemp10;
+                                                                    }
+
+                                                                }
+                                                                else
+                                                                {
+
+                                                                    //One Step a head
+                                                                    PositionCopyX = DestinationX;
+                                                                    PositionCopyY = DestinationY;
+                                                                    PositionCopyZ = DestinationZ;
+
+                                                                    DestinationCopyX = CopyTemp4;
+                                                                    DestinationCopyY = CopyTemp7;
+                                                                    DestinationCopyZ = CopyTemp10;
+
+                                                                    Counter11 = 1;
+                                                                }
+                                                            }
+                                                            else
+                                                            {
+                                                                DestinationX = CopyTemp4;
+                                                                DestinationY = CopyTemp7;
+                                                                DestinationZ = CopyTemp10;
+                                                            }
+
+                                                            }
+
+                                                        }
+
+                                                    }
+                                                    else
+                                                    {
+                                                        std::cout << "    Observation: Please insert a valid command " << std::endl;
+                                                        Command.clear();
+                                                    }
+
+                                                }
+                                                else
+                                                {
+                                                    std::cout << "    Observation: Please insert a valid command " << std::endl;
+                                                    Command.clear();
+                                                }
+                                            }
+                                        }
+                                        else
+                                        {
+                                            std::cout << "    Observation: Please introduce a valid command" << std::endl;
+                                            Command.clear();
+                                        }
+                                        ////
+                                        if (!Command.empty() && BlockSerial == 0)
+                                        {
+                                            // Name Generator
+                                            SerialNumber++;
+                                            SerialName = 'K' + std::to_string(SerialNumber);
+                                        }
+                                    }
+                                    else
+                                    {
+                                        std::cout << "    Observation: Please introduce a valid command" << std::endl;
+                                        Command.clear();
+                                    }
+                                }
+                                else
+                                {
+                                    std::cout << "    Observation: Please introduce a valid command" << std::endl;
+                                    Command.clear();
+                                }
+                            }
+                            else
+                            {
+                                std::cout << "    Observation: Please introduce a valid command" << std::endl;
+                                Command.clear();
+                            }
+                        }
+                    }
+                    else
+                    {
+                        std::cout << "    Observation: Please introduce a valid command" << std::endl;
+                        Command.clear();
+                    }
+                }
+                else
+                {
+                    std::cout << "    Observation: Please introduce a valid command" << std::endl;
+                    Command.clear();
+                }
+            }
+        }
+
+
+
+
+        // Read Memory Matrix - Determine Steps and Free Space
+        for (int j = 0; j < Row; j++)
+        {
+            for (int i = 0; i < Column; i++)
+            {
+                int FreeSpaceCounter = 0;
+
+                for (int k = 0; k < Height; k++)
+                {
+                    if (i == PositionX && PositionY == j && MemoryTensor[k][j][i] == 1)
+                    {
+                        if (k >= PositionZ)
+                        {
+                            StepsPosition++;
+                        }
+                    }
+
+                    if (i == DestinationX && DestinationY == j && MemoryTensor[k][j][i] == 1)
+                    {
+                        if (k >= DestinationZ)
+                        {
+                            StepsDestination++;
+                        }
+                    }
+
+                    if (MemoryTensor[k][j][i] == 0)
+                    {
+                        FreeSpaceCounter++;
+                    }
+
+                    if (k + 1 == Height)
+                    {
+                        FreeSpaceMatrix[j][i] = FreeSpaceCounter;
+                    }
+                }
+            }
+        }
+
+        // Determine Preference Matrices
+        // Position Preference Matrix
+        for (int j = 0; j < Row; j++)
+        {
+            for (int i = 0; i < Column; i++)
+            {
+                if (StepsPosition > 1)
+                {
+                    if (j == PositionY)
+                    {
+                        if (i >= PositionX)
+                        {
+                            PreferencePositionMatrix[j][i] = i - PositionX;
+                        }
+                        else
+                        {
+                            PreferencePositionMatrix[j][i] = PositionX - i;
+                        }
+
+                    }
+
+                    if (j < PositionY)
+                    {
+                        if (i >= PositionX)
+                        {
+                            PreferencePositionMatrix[j][i] = i - PositionX + 2 * (PositionY - j) + 1;
+                        }
+                        else
+                        {
+                            PreferencePositionMatrix[j][i] = PositionX - 1 + 2 * (PositionY - j) + 1;
+                        }
+                    }
+
+                    if (j > PositionY)
+                    {
+                        if (i >= PositionX)
+                        {
+                            PreferencePositionMatrix[j][i] = i - PositionX + 2 * (j - PositionY) + 1;
+                        }
+                        else
+                        {
+                            PreferencePositionMatrix[j][i] = PositionX - i + 2 * (j - PositionY) + 1;
+                        }
+                    }
+
+                    if (i == DestinationX && j == DestinationY)
+                    {
+                        PreferencePositionMatrix[j][i] = Height * Row * Column;
+                    }
+                }
+                else
+                {
+                    if (i == PositionX && j == PositionY)
+                    {
+                        PreferencePositionMatrix[j][i] = 0;
+                    }
+                    else
+                    {
+                        if (i == DestinationX && j == DestinationY)
+                        {
+                            PreferencePositionMatrix[j][i] = 1;
+                        }
+                        else
+                        {
+                            if ((0 > DestinationX > Column || 0 > DestinationY > Row) && Counter6 < 0)
+                            {
+                                Counter5--;
+                                Counter6++;
+                                PreferencePositionMatrix[j][i] = Counter5++;
+                            }
+                            else
+                            {
+                                PreferencePositionMatrix[j][i] = Counter5++;
+                            }
+
+                        }
+                    }
+                }
+
+                if (DestinationX == PositionX && DestinationY == PositionY)
+                {
+                    if (i == PositionX && j == PositionY)
+                    {
+                        PreferencePositionMatrix[j][i] = 0;
+                    }
+                    else
+                    {
+                        PreferencePositionMatrix[j][i] = Height * Column * Row;
+                    }
+                }
+            }
+        }
+
+        // Destination Preference Matrix 
+        for (int j = 0; j < Row; j++)
+        {
+            for (int i = 0; i < Column; i++)
+            {
+                if (StepsDestination > 0)
+                {
+                    if (j == DestinationY)
+                    {
+                        if (i >= DestinationX)
+                        {
+                            PreferenceDestinationMatrix[j][i] = i - DestinationX;
+                        }
+                        else
+                        {
+                            PreferenceDestinationMatrix[j][i] = DestinationX - i;
+                        }
+                    }
+
+                    if (j < DestinationY)
+                    {
+                        if (i >= DestinationX)
+                        {
+                            PreferenceDestinationMatrix[j][i] = i - DestinationX + 2 * (DestinationY - j) + 1;
+                        }
+                        else
+                        {
+                            PreferenceDestinationMatrix[j][i] = DestinationX - 1 + 2 * (DestinationY - j) + 1;
+                        }
+                    }
+
+                    if (j > DestinationY)
+                    {
+                        if (i >= DestinationX)
+                        {
+                            PreferenceDestinationMatrix[j][i] = i - DestinationX + 2 * (j - DestinationY) + 1;
+                        }
+                        else
+                        {
+                            PreferenceDestinationMatrix[j][i] = DestinationX - i + 2 * (j - DestinationY) + 1;
+                        }
+                    }
+
+                    if (i == PositionX && j == PositionY)
+                    {
+                        PreferenceDestinationMatrix[j][i] = Height * Row * Column;
+                    }
+                }
+                else
+                {
+                    if (i == DestinationX && j == DestinationY)
+                    {
+                        PreferenceDestinationMatrix[j][i] = 0;
+                    }
+                    else
+                    {
+                        PreferenceDestinationMatrix[j][i] = Height * Column * Row;
+                    }
+                }
+
+                if (DestinationX == PositionX && DestinationY == PositionY)
+                {
+                    if (i == DestinationX && j == DestinationY)
+                    {
+                        PreferenceDestinationMatrix[j][i] = 0;
+                    }
+                    else
+                    {
+                        PreferenceDestinationMatrix[j][i] = Height * Column * Row;
+                    }
+                }
+
+            }
+        }
+
+        FreeVariationMatrix = FreeSpaceMatrix;
+
+        // Sequence Determination - Clearing the Position of Origin, Except for Position 
+        if (StepsPosition > 1)
+        {
+            for (int s = 1; s < StepsPosition; s++)
+            {
+                int Reference = Row * Height * Column;
+                int ValueX = Row * Height * Column;
+                int ValueY = Row * Height * Column;
+                int ValueZ = Row * Height * Column;
+
+                for (int j = 0; j < Row; j++)
+                {
+                    for (int i = 0; i < Column; i++)
+                    {
+                        if (PreferencePositionMatrix[j][i] < Reference && PreferencePositionMatrix[j][i] != 0 && FreeVariationMatrix[j][i] > 0)
+                        {
+                            Reference = PreferencePositionMatrix[j][i];
+                            ValueX = i;
+                            ValueY = j;
+                            ValueZ = Height - FreeVariationMatrix[j][i];
+                        }
+                    }
+                }
+
+                if (ValueX >= 0 && ValueX < Column && ValueY < Row && ValueY >= 0 && ValueZ < Height && ValueZ >= 0)
+                {
+                    SequencePositionX.push_back(PositionX);
+                    SequencePositionY.push_back(PositionY);
+                    SequencePositionZ.push_back(Height - FreeVariationMatrix[PositionY][PositionX] - 1);
+
+                    //Reverse Recording - Block over Each other
+                    if (Counter12 == 1)
+                    {
+                        SequenceDestinationRecorderX.push_back(PositionX);
+                        SequenceDestinationRecorderY.push_back(PositionY);
+                        SequenceDestinationRecorderZ.push_back(Height - FreeVariationMatrix[PositionY][PositionX] - 1);
+                    }
+
+                    FreeVariationMatrix[PositionY][PositionX] = FreeVariationMatrix[PositionY][PositionX] + 1;
+                    SequenceDestinationX.push_back(ValueX);
+                    SequenceDestinationY.push_back(ValueY);
+                    SequenceDestinationZ.push_back(ValueZ);
+                    FreeVariationMatrix[ValueY][ValueX] = FreeVariationMatrix[ValueY][ValueX] - 1;
+
+                    //Reverse Recording - Block over Each other
+                    if (Counter12 == 1)
+                    {
+                        SequencePositionRecorderX.push_back(ValueX);
+                        SequencePositionRecorderY.push_back(ValueY);
+                        SequencePositionRecorderZ.push_back(ValueZ);
+                    }
+
+                }
+            }
+        }
+
+
+        // Sequence Determination - Clearing the Position of Destination, All
+        if (StepsDestination > 0)
+        {
+            for (int s = 0; s < StepsDestination; s++)
+            {
+                int Reference = Row * Height * Column;
+                int ValueX = Row * Height * Column;
+                int ValueY = Row * Height * Column;
+                int ValueZ = Row * Height * Column;
+
+                for (int j = 0; j < Row; j++)
+                {
+                    for (int i = 0; i < Column; i++)
+                    {
+                        if (PreferenceDestinationMatrix[j][i] < Reference && PreferenceDestinationMatrix[j][i] != 0 && FreeVariationMatrix[j][i] > 0)
+                        {
+                            Reference = PreferenceDestinationMatrix[j][i];
+                            ValueX = i;
+                            ValueY = j;
+                            ValueZ = Height - FreeVariationMatrix[j][i];
+                        }
+                    }
+                }
+
+                if (ValueX >= 0 && ValueX < Column && ValueY < Row && ValueY >= 0 && ValueZ < Height && ValueZ >= 0)
+                {
+                    SequencePositionX.push_back(DestinationX);
+                    SequencePositionY.push_back(DestinationY);
+                    SequencePositionZ.push_back(Height - FreeVariationMatrix[DestinationY][DestinationX] - 1);
+                    FreeVariationMatrix[DestinationY][DestinationX] = FreeVariationMatrix[DestinationY][DestinationX] + 1;
+
+                    SequenceDestinationX.push_back(ValueX);
+                    SequenceDestinationY.push_back(ValueY);
+                    SequenceDestinationZ.push_back(ValueZ);
+                    FreeVariationMatrix[ValueY][ValueX] = FreeVariationMatrix[ValueY][ValueX] - 1;
+                }
+            }
+        }
+
+        // Translation of Objective to Destination
+        // From Exit/Entry to Storage
+        if ((DestinationX >= 0 && DestinationX < Column && DestinationY >= 0 && DestinationY < Row && DestinationZ >= 0 && DestinationZ < Height) && (PositionX < 0 || PositionX > Column || PositionY < 0 || PositionY > Row || PositionZ < 0 || PositionZ > Height))
+        {
+            StepsPosition = 1;
+            SequencePositionX.push_back(PositionX);
+            SequencePositionY.push_back(PositionY);
+            SequencePositionZ.push_back(PositionZ);
+            SequenceDestinationX.push_back(DestinationX);
+            SequenceDestinationY.push_back(DestinationY);
+            SequenceDestinationZ.push_back(Height - FreeVariationMatrix[DestinationY][DestinationX]);
+            FreeVariationMatrix[DestinationY][DestinationX] = FreeVariationMatrix[DestinationY][DestinationX] - 1;
+        }
+        else
+        {
+            // Within Exit/Entry
+            if ((PositionX < 0 || PositionX > Column || PositionY < 0 || PositionY > Row || PositionZ < 0 || PositionZ > Height) && (DestinationX < 0 || DestinationX > Column || DestinationY < 0 || DestinationY > Row || DestinationZ < 0 || DestinationZ > Height))
+            {
+                StepsPosition = 1;
+                SequencePositionX.push_back(PositionX);
+                SequencePositionY.push_back(PositionY);
+                SequencePositionZ.push_back(PositionZ);
+
+                SequenceDestinationX.push_back(DestinationX);
+                SequenceDestinationY.push_back(DestinationY);
+                SequenceDestinationZ.push_back(DestinationZ);
+            }
+            else
+            {
+                // From Storage to Exit/Entry
+                if ((PositionX >= 0 && PositionX < Column && PositionY >= 0 && PositionY < Row && PositionZ >= 0 && PositionZ < Height) && (DestinationX < 0 || DestinationX > Column || DestinationY < 0 || DestinationY > Row || DestinationZ < 0 || DestinationZ > Height))
+                {
+                    if (StepsPosition > 0)
+                    {
+                        SequencePositionX.push_back(PositionX);
+                        SequencePositionY.push_back(PositionY);
+                        SequencePositionZ.push_back(Height - FreeVariationMatrix[PositionY][PositionX] - 1);
+                        FreeVariationMatrix[PositionY][PositionX] = FreeVariationMatrix[PositionY][PositionX] + 1;
+                        SequenceDestinationX.push_back(DestinationX);
+                        SequenceDestinationY.push_back(DestinationY);
+                        SequenceDestinationZ.push_back(DestinationZ);
+                    }
+                }
+                else
+                {
+                    // Within Storage
+                    if ((DestinationX >= 0 && DestinationX < Column && DestinationY >= 0 && DestinationY < Row && DestinationZ >= 0 && DestinationZ < Height) && (PositionX >= 0 && PositionX < Column && PositionY >= 0 && PositionY < Row && PositionZ >= 0 && PositionZ < Height))
+                    {
+                        if (StepsPosition > 0)
+                        {
+                            SequencePositionX.push_back(PositionX);
+                            SequencePositionY.push_back(PositionY);
+                            // heerrreee
+                            std::cout << FreeVariationMatrix[PositionY][PositionX] << std::endl;
+                            SequencePositionZ.push_back(Height - FreeVariationMatrix[PositionY][PositionX] - 1);
+                            FreeVariationMatrix[PositionY][PositionX] = FreeVariationMatrix[PositionY][PositionX] + 1;
+
+                            SequenceDestinationX.push_back(DestinationX);
+                            SequenceDestinationY.push_back(DestinationY);
+                            SequenceDestinationZ.push_back(Height - FreeVariationMatrix[DestinationY][DestinationX]);
+                            FreeVariationMatrix[DestinationY][DestinationX] = FreeVariationMatrix[DestinationY][DestinationX] - 1;
+                        }
+                    }
+                }
+
+            }
+        }
+
+        // Swaping Sequence
+        if ((DestinationX >= 0 && DestinationX < Column && DestinationY >= 0 && DestinationY < Row && DestinationZ >= 0 && DestinationZ < Height) && (PositionX >= 0 && PositionX < Column && PositionY >= 0 && PositionY < Row && PositionZ >= 0 && PositionZ < Height))
+        {
+            if (StepsDestination > 0 && StepsPosition > 0)
+            {
+                SequencePositionX.push_back(SequenceDestinationX[StepsPosition + StepsDestination - 2]);
+                SequencePositionY.push_back(SequenceDestinationY[StepsPosition + StepsDestination - 2]);
+                SequencePositionZ.push_back(SequenceDestinationZ[StepsPosition + StepsDestination - 2]);
+                FreeVariationMatrix[SequenceDestinationY[StepsPosition + StepsDestination - 2]][SequenceDestinationX[StepsPosition + StepsDestination - 2]] = FreeVariationMatrix[SequenceDestinationY[StepsPosition + StepsDestination - 2]][SequenceDestinationX[StepsPosition + StepsDestination - 2]] + 1;
+
+                SequenceDestinationX.push_back(SequencePositionX[StepsPosition + StepsDestination - 1]);
+                SequenceDestinationY.push_back(SequencePositionY[StepsPosition + StepsDestination - 1]);
+                SequenceDestinationZ.push_back(SequencePositionZ[StepsPosition + StepsDestination - 1]);
+                FreeVariationMatrix[SequencePositionY[StepsPosition + StepsDestination - 1]][SequencePositionX[StepsPosition + StepsDestination - 1]] = FreeVariationMatrix[SequencePositionY[StepsPosition + StepsDestination - 1]][SequencePositionX[StepsPosition + StepsDestination - 1]] - 1;
+            }
+        }
+
+        // Fixing the place of Destination - Reverse
+        if ((DestinationX >= 0 && DestinationX < Column && DestinationY >= 0 && DestinationY < Row && DestinationZ >= 0 && DestinationZ < Height) && (PositionX >= 0 && PositionX < Column && PositionY >= 0 && PositionY < Row && PositionZ >= 0 && PositionZ < Height))
+        {
+            if (StepsDestination > 1 && StepsPosition > 0)
+            {
+                for (int d = 0; d < StepsDestination - 1; d++)
+                {
+                    SequencePositionX.push_back(SequenceDestinationX[StepsPosition + StepsDestination - 3 - d]);
+                    SequencePositionY.push_back(SequenceDestinationY[StepsPosition + StepsDestination - 3 - d]);
+                    SequencePositionZ.push_back(SequenceDestinationZ[StepsPosition + StepsDestination - 3 - d]);
+                    FreeVariationMatrix[SequenceDestinationY[StepsPosition + StepsDestination - 3 - d]][SequenceDestinationX[StepsPosition + StepsDestination - 3 - d]] = FreeVariationMatrix[SequenceDestinationY[StepsPosition + StepsDestination - 3 - d]][SequenceDestinationX[StepsPosition + StepsDestination - 3 - d]] + 1;
+
+                    SequenceDestinationX.push_back(SequencePositionX[StepsPosition + StepsDestination - 3 - d]);
+                    SequenceDestinationY.push_back(SequencePositionY[StepsPosition + StepsDestination - 3 - d]);
+                    SequenceDestinationZ.push_back(SequencePositionZ[StepsPosition + StepsDestination - 3 - d]);
+                    FreeVariationMatrix[SequencePositionY[StepsPosition + StepsDestination - 3 - d]][SequencePositionX[StepsPosition + StepsDestination - 3 - d]] = FreeVariationMatrix[SequencePositionY[StepsPosition + StepsDestination - 3 - d]][SequencePositionX[StepsPosition + StepsDestination - 3 - d]] - 1;
+                }
+            }
+        }
+
+        // Fixing the place of Origin - Reverse
+        if ((DestinationX >= 0 && DestinationX < Column && DestinationY >= 0 && DestinationY < Row && DestinationZ >= 0 && DestinationZ < Height) && (PositionX >= 0 && PositionX < Column && PositionY >= 0 && PositionY < Row && PositionZ >= 0 && PositionZ < Height))
+        {
+            if (StepsDestination > 0 && StepsPosition > 1)
+            {
+                for (int d = 0; d < StepsPosition - 1; d++)
+                {
+                    SequencePositionX.push_back(SequenceDestinationX[StepsPosition - d - 2]);
+                    SequencePositionY.push_back(SequenceDestinationY[StepsPosition - d - 2]);
+                    SequencePositionZ.push_back(SequenceDestinationZ[StepsPosition - d - 2]);
+                    FreeVariationMatrix[SequenceDestinationY[StepsPosition - d - 2]][SequenceDestinationX[StepsPosition - d - 2]] = FreeVariationMatrix[SequenceDestinationY[StepsPosition - d - 2]][SequenceDestinationX[StepsPosition - d - 2]] + 1;
+                    SequenceDestinationX.push_back(SequencePositionX[StepsPosition - d - 2]);
+                    SequenceDestinationY.push_back(SequencePositionY[StepsPosition - d - 2]);
+                    SequenceDestinationZ.push_back(SequencePositionZ[StepsPosition - d - 2]);
+                    FreeVariationMatrix[SequencePositionY[StepsPosition - d - 2]][SequencePositionX[StepsPosition - d - 2]] = FreeVariationMatrix[SequencePositionY[StepsPosition - d - 2]][SequencePositionX[StepsPosition - d - 2]] - 1;
+                }
+            }
+        }
+
+        // Fixing the place of Origin - Reverse, First Perculiar Exception
+        if ((DestinationX >= 0 && DestinationX < Column && DestinationY >= 0 && DestinationY < Row && DestinationZ >= 0 && DestinationZ < Height) && (PositionX >= 0 && PositionX < Column && PositionY >= 0 && PositionY < Row && PositionZ >= 0 && PositionZ < Height))
+        {
+            if (StepsDestination == 0 && StepsPosition > 1 && Counter12 == 0 && Counter13 == 0)
+            {
+                for (int d = 0; d < StepsPosition - 1; d++)
+                {
+                    SequencePositionX.push_back(SequenceDestinationX[StepsPosition - d - 2]);
+                    SequencePositionY.push_back(SequenceDestinationY[StepsPosition - d - 2]);
+                    SequencePositionZ.push_back(SequenceDestinationZ[StepsPosition - d - 2]);
+                    FreeVariationMatrix[SequenceDestinationY[StepsPosition - d - 2]][SequenceDestinationX[StepsPosition - d - 2]] = FreeVariationMatrix[SequenceDestinationY[StepsPosition - d - 2]][SequenceDestinationX[StepsPosition - d - 2]] + 1;
+
+                    SequenceDestinationX.push_back(SequencePositionX[StepsPosition - d - 2]);
+                    SequenceDestinationY.push_back(SequencePositionY[StepsPosition - d - 2]);
+                    SequenceDestinationZ.push_back(SequencePositionZ[StepsPosition - d - 2] - 1);
+                    FreeVariationMatrix[SequencePositionY[StepsPosition - d - 2]][SequencePositionX[StepsPosition - d - 2]] = FreeVariationMatrix[SequencePositionY[StepsPosition - d - 2]][SequencePositionX[StepsPosition - d - 2]] - 1;
+
+                }
+            }
+        }
+
+        // Fixing the place of Origin - Reverse, Second Perculiar Exception
+        if ((DestinationX >= 0 && DestinationX < Column && DestinationY >= 0 && DestinationY < Row && DestinationZ >= 0 && DestinationZ < Height) && (PositionX >= 0 && PositionX < Column && PositionY >= 0 && PositionY < Row && PositionZ >= 0 && PositionZ < Height))
+        {
+            if (StepsDestination == 0 && StepsPosition > 1 && Counter12 == 0 && Counter13 == 1)
+            {
+                int ExtraSpace = 0;
+
+                for (int d = 0; d < StepsPosition - 1; d++)
+                {
+                    SequencePositionX.push_back(SequenceDestinationX[StepsPosition - d - 2]);
+                    SequencePositionY.push_back(SequenceDestinationY[StepsPosition - d - 2]);
+                    SequencePositionZ.push_back(SequenceDestinationZ[StepsPosition - d - 2]);
+                    FreeVariationMatrix[SequenceDestinationY[StepsPosition - d - 2]][SequenceDestinationX[StepsPosition - d - 2]] = FreeVariationMatrix[SequenceDestinationY[StepsPosition - d - 2]][SequenceDestinationX[StepsPosition - d - 2]] + 1;
+
+                    SequenceDestinationX.push_back(SequencePositionX[StepsPosition - d - 2]);
+                    SequenceDestinationY.push_back(SequencePositionY[StepsPosition - d - 2]);
+                    SequenceDestinationZ.push_back(SequencePositionZ[StepsPosition - d - 2] - 1 + ExtraSpace);
+                    FreeVariationMatrix[SequencePositionY[StepsPosition - d - 2]][SequencePositionX[StepsPosition - d - 2]] = FreeVariationMatrix[SequencePositionY[StepsPosition - d - 2]][SequencePositionX[StepsPosition - d - 2]] - 1;
+
+                    if (d == 0)
+                    {
+                        SequencePositionX.push_back(DestinationX);
+                        SequencePositionY.push_back(DestinationY);
+                        SequencePositionZ.push_back(DestinationZ);
+                        FreeVariationMatrix[DestinationY][DestinationX] = FreeVariationMatrix[DestinationY][DestinationX] + 1;
+
+                        SequenceDestinationX.push_back(PositionX);
+                        SequenceDestinationY.push_back(PositionY);
+                        SequenceDestinationZ.push_back(PositionZ + 1);
+                        FreeVariationMatrix[PositionY][PositionX] = FreeVariationMatrix[PositionY][PositionX] - 1;
+
+                        ExtraSpace = 1;
+                    }
+                }
+
+                Counter13 = 0;
+            }
+        }
+
+        // Rebooting Counter
+        if ((DestinationX >= 0 && DestinationX < Column && DestinationY >= 0 && DestinationY < Row && DestinationZ >= 0 && DestinationZ < Height) && (PositionX >= 0 && PositionX < Column && PositionY >= 0 && PositionY < Row && PositionZ >= 0 && PositionZ < Height))
+        {
+            if (Counter11 == 2 || Counter12 == 2)
+            {
+                if (SequenceDestinationRecorderX.size() == SequenceDestinationRecorderY.size() && SequenceDestinationRecorderY.size() == SequenceDestinationRecorderZ.size())
+                {
+                    if (SequenceDestinationRecorderX.size() == SequencePositionRecorderX.size() && SequencePositionRecorderX.size() == SequencePositionRecorderY.size() && SequencePositionRecorderY.size() == SequencePositionRecorderZ.size())
+                    {
+                        for (int r = 0; r < SequenceDestinationRecorderX.size(); r++)
+                        {
+
+                            SequencePositionX.push_back(SequencePositionRecorderX[r]);
+                            SequencePositionY.push_back(SequencePositionRecorderY[r]);
+                            SequencePositionZ.push_back(SequencePositionRecorderZ[r]);
+                            FreeVariationMatrix[SequencePositionRecorderY[r]][SequencePositionRecorderX[r]] = FreeVariationMatrix[SequencePositionRecorderY[r]][SequencePositionRecorderX[r]] + 1;
+
+                            SequenceDestinationX.push_back(SequenceDestinationRecorderX[r]);
+                            SequenceDestinationY.push_back(SequenceDestinationRecorderY[r]);
+                            SequenceDestinationZ.push_back(SequenceDestinationRecorderZ[r]);
+                            FreeVariationMatrix[SequenceDestinationRecorderY[r]][SequenceDestinationRecorderX[r]] = FreeVariationMatrix[SequenceDestinationRecorderY[r]][SequenceDestinationRecorderX[r]] - 1;
+
+                        }
+                    }
+                }
+
+                Counter11 = 0;
+                Counter12 = 0;
+
+                SequenceDestinationRecorderX.clear();
+                SequenceDestinationRecorderX.swap(EmptyVector);
+
+                SequenceDestinationRecorderY.clear();
+                SequenceDestinationRecorderY.swap(EmptyVector);
+
+                SequenceDestinationRecorderZ.clear();
+                SequenceDestinationRecorderZ.swap(EmptyVector);
+
+                SequencePositionRecorderX.clear();
+                SequencePositionRecorderX.swap(EmptyVector);
+
+                SequencePositionRecorderY.clear();
+                SequencePositionRecorderY.swap(EmptyVector);
+
+                SequencePositionRecorderZ.clear();
+                SequencePositionRecorderZ.swap(EmptyVector);
+            }
+        }
+        std::cout << std::endl;
+
+
+        if (SequenceDestinationX.size() == SequenceDestinationY.size() && SequenceDestinationY.size() == SequenceDestinationZ.size())
+        {
+            if (SequencePositionX.size() == SequencePositionY.size() && SequencePositionY.size() == SequencePositionZ.size())
+            {
+                for (int s = 0; s < SequenceDestinationX.size(); s++)
+                {
+                    int CopyPriority = 0;
+                    int CopyMemory = 0;
+                    std::string CopyName;
+
+                    if (SequencePositionZ[s] == 0 && SequencePositionY[s] == -1 && SequencePositionX[s] == 0)
+                    {
+                        PriorityEntry = PriorityNumber;
+                        NameEntry = SerialName;
+                        MemoryEntry = 1;
+                    }
+
+                    if (SequencePositionZ[s] == 0 && SequencePositionY[s] == 0 && SequencePositionX[s] == -1)
+                    {
+                        PriorityExit = PriorityNumber;
+                        NameExit = SerialName;
+                        MemoryExit = 1;
+                    }
+
+                    if (SequencePositionZ[s] == 0 && SequencePositionY[s] == -1 && SequencePositionX[s] == 0)
+                    {
+                        CopyPriority = PriorityEntry;
+                        CopyMemory = MemoryEntry;
+                        CopyName = NameEntry;
+                        PriorityEntry = 0;
+                        NameEntry = "N/A";
+                        MemoryEntry = 0;
+                    }
+
+                    if (SequencePositionZ[s] == 0 && SequencePositionY[s] == 0 && SequencePositionX[s] == -1)
+                    {
+                        CopyPriority = PriorityExit;
+                        CopyMemory = MemoryExit;
+                        CopyName = NameExit;
+                        PriorityExit = 0;
+                        NameExit = "N/A";
+                        MemoryExit = 0;
+                    }
+
+                    if (0 <= SequencePositionZ[s] && SequencePositionZ[s] < Height && 0 <= SequencePositionY[s] && SequencePositionY[s] < Row && 0 <= SequencePositionX[s] && SequencePositionX[s] < Column)
+                    {
+                        CopyPriority = PriorityDinamicTensor[SequencePositionZ[s]][SequencePositionY[s]][SequencePositionX[s]];
+                        CopyName = NameTensor[SequencePositionZ[s]][SequencePositionY[s]][SequencePositionX[s]];
+                        CopyMemory = MemoryTensor[SequencePositionZ[s]][SequencePositionY[s]][SequencePositionX[s]];
+                        PriorityDinamicTensor[SequencePositionZ[s]][SequencePositionY[s]][SequencePositionX[s]] = 0;
+                        NameTensor[SequencePositionZ[s]][SequencePositionY[s]][SequencePositionX[s]] = "N/A";
+                        MemoryTensor[SequencePositionZ[s]][SequencePositionY[s]][SequencePositionX[s]] = 0;
+                    }
+
+                    if (0 <= SequenceDestinationZ[s] && SequenceDestinationZ[s] < Height && 0 <= SequenceDestinationY[s] && SequenceDestinationY[s] < Row && 0 <= SequenceDestinationX[s] && SequenceDestinationX[s] < Column)
+                    {
+                        PriorityDinamicTensor[SequenceDestinationZ[s]][SequenceDestinationY[s]][SequenceDestinationX[s]] = CopyPriority;
+                        NameTensor[SequenceDestinationZ[s]][SequenceDestinationY[s]][SequenceDestinationX[s]] = CopyName;
+                        MemoryTensor[SequenceDestinationZ[s]][SequenceDestinationY[s]][SequenceDestinationX[s]] = CopyMemory;
+                    }
+
+                    if (SequenceDestinationZ[s] == 0 && SequenceDestinationY[s] == 0 && SequenceDestinationX[s] == -1)
+                    {
+                        PriorityExit = CopyPriority;
+                        NameExit = CopyName;
+                        MemoryExit = CopyMemory;
+                    }
+
+                    if (SequenceDestinationZ[s] == 0 && SequenceDestinationY[s] == -1 && SequenceDestinationX[s] == 0)
+                    {
+                        PriorityEntry = CopyPriority;
+                        NameEntry = CopyName;
+                        MemoryEntry = CopyMemory;
+                    }
+
+                }
+            }
+        }
+
+    }
+
+}
